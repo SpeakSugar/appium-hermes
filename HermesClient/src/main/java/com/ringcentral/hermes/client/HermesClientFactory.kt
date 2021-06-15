@@ -64,14 +64,16 @@ object HermesClientFactory {
             if (isSimulator) {
                 hermesUrl = "http://$hostName:8080"
             } else {
-                shellExec.executeCmd("nohup iproxy -u $udid $hermesPort 8080 &")
+                shellExec.executeCmd("iproxy -u $udid $hermesPort 8080 &")
                 RetryUtil.call(Callable {
                     return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
                 }, Predicate.isEqual<Boolean>(true))
                 LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
             }
         } else {
-            shellExec.executeCmd("nohup adb -a nodaemon server &")
+            if(hostName != "127.0.0.1") {
+                shellExec.executeCmd("adb -a nodaemon server")
+            }
             shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
                 return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
