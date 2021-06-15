@@ -47,7 +47,7 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
             if (response.code() >= 200 && response.code() < 400) {
                 return String.valueOf(response.body().getData().get("res"));
             } else {
-                throw new RuntimeException();
+                return null;
             }
         } catch (IOException e) {
             return null;
