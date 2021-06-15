@@ -63,7 +63,7 @@ object HermesClientFactory {
             if (isSimulator) {
                 hermesUrl = "http://$hostName:8080"
             } else {
-                shellExec.executeCmd("iproxy $hermesPort 8080 $udid &")
+                shellExec.executeCmd("iproxy -u $udid $hermesPort 8080 &")
                 RetryUtil.call(Callable {
                     return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
                 }, Predicate.isEqual<Boolean>(true))
