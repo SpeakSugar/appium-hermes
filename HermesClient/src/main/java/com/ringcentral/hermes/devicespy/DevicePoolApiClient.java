@@ -36,6 +36,7 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
     }
 
     public String executeCmd(String command) {
+        LOG.info("The command is: " + command);
         try {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("hostname", this.hostName);

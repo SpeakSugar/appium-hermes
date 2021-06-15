@@ -15,6 +15,7 @@ public class ShellUtil implements ShellFactory.ShellExec {
     private static final Logger LOG = LoggerFactory.getLogger(ShellUtil.class);
 
     public String executeCmd(String completeCmd) {
+        LOG.info("The command is: " + completeCmd);
         InputStreamReader isr = null;
         LineNumberReader input = null;
         try {

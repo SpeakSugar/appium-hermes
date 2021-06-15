@@ -70,7 +70,7 @@ object HermesClientFactory {
                 LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
             }
         } else {
-            shellExec.executeCmd("adb -a nodaemon server &")
+            shellExec.executeCmd("nohup adb -a nodaemon server &")
             shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
                 return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
