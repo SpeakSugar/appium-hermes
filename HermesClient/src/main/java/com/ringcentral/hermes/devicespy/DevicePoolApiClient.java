@@ -50,7 +50,7 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
                 throw new RuntimeException();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 

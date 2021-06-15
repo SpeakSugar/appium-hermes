@@ -48,6 +48,7 @@ object HermesClientFactory {
         val pid = shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'")
         if (StringUtils.isNotBlank(pid)) {
             shellExec.executeCmd("kill -9 $pid")
+            Thread.sleep(2000)
         }
         if (platformName == "ios") {
             val driverWait = WebDriverWait(driver, 5)
