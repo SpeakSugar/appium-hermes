@@ -41,7 +41,7 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("hostname", this.hostName);
             requestBody.put("cmd", command);
-            requestBody.put("timeout", 60);
+            requestBody.put("timeout", 10);
             Call<CommonDevicePoolResponse> call = devicePoolService.executeCommand(requestBody);
             Response<CommonDevicePoolResponse> response = call.execute();
             if (response.code() >= 200 && response.code() < 400) {
