@@ -26,11 +26,14 @@ object HermesClientFactory {
 
     fun setUp(driver: AppiumDriver<*>, isSimulator: Boolean, hermesAppPath: String) {
         //1. install hermes app, and launch it
-        if (!driver.isAppInstalled("org.ringcentral.hermes")) {
-            LOG.info("start to install hermes app...")
-            driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
-            LOG.info("hermes app install success.")
+        if (driver.isAppInstalled("org.ringcentral.hermes")) {
+            LOG.info("start to delete hermes app...")
+            driver.removeApp("org.ringcentral.hermes")
+            LOG.info("delete hermes app success.")
         }
+        LOG.info("start to install hermes app...")
+        driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
+        LOG.info("hermes app install success.")
         driver.activateApp("org.ringcentral.hermes")
         LOG.info("hermes app activate success.")
         //2. port mapping, ios permission grant
