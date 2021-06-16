@@ -65,7 +65,7 @@ public class ContactsApiTest {
     public void androidFindContactTest() {
         driver = createAndroidDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, false, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
         ResponseBean<List<ContactRsp>> responseBean = HermesClientFactory.INSTANCE.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
@@ -75,7 +75,7 @@ public class ContactsApiTest {
     public void iosFindContactTest() {
         driver = createIOSDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, true, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
         ResponseBean<List<ContactRsp>> responseBean = HermesClientFactory.INSTANCE.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
@@ -85,7 +85,7 @@ public class ContactsApiTest {
     public void iosAddContact() {
         driver = createIOSDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, true, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -102,7 +102,7 @@ public class ContactsApiTest {
     public void androidAddContact() {
         driver = createAndroidDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, false, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -119,7 +119,7 @@ public class ContactsApiTest {
     public void androidDeleteContactTest() {
         driver = createAndroidDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, false, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
         ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().deleteContact("3354");
         System.out.println(responseBean.getReturnMsg());
         driver.quit();

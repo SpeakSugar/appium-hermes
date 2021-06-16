@@ -24,7 +24,7 @@ object HermesClientFactory {
 
     lateinit var calendarApiClient: CalendarApiClient
 
-    fun setUp(driver: AppiumDriver<*>, isSimulator: Boolean, hermesAppPath: String) {
+    fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
         //1. install hermes app, and launch it
         if (driver.isAppInstalled("org.ringcentral.hermes")) {
             LOG.info("start to delete hermes app...")
@@ -45,11 +45,14 @@ object HermesClientFactory {
         val hostName = appiumUrl.host
         var hermesUrl = "http://$hostName:$hermesPort"
         val shellExec = ShellFactory.getShellExec(hostName)
-        val pid = shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'")
-        if (StringUtils.isNotBlank(pid)) {
-            shellExec.executeCmd("kill -9 $pid")
-            Thread.sleep(2000)
-        }
+        RetryUtil.call(Callable {
+            val cmd = "lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"
+            val pid = shellExec.executeCmd(cmd)
+            if (StringUtils.isNotBlank(pid)) {
+                shellExec.executeCmd("kill -9 $pid")
+            }
+            return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+        }, Predicate.isEqual(false))
         if (platformName == "ios") {
             val driverWait = WebDriverWait(driver, 5)
             val expectedConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='OK']"))
@@ -61,7 +64,7 @@ object HermesClientFactory {
                     return@Callable false
                 }
             }, Predicate.isEqual(true))
-            if (isSimulator) {
+            if (hermesAppPath.contains(".zip")) {
                 hermesUrl = "http://$hostName:8080"
             } else {
                 shellExec.executeCmd("iproxy -u $udid -s 0.0.0.0 $hermesPort:8080 &")
@@ -71,9 +74,15 @@ object HermesClientFactory {
                 LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
             }
         } else {
-            if(hostName != "127.0.0.1") {
-                shellExec.executeCmd("adb -a nodaemon server")
-            }
+            RetryUtil.call(Callable {
+                val cmd = "lsof -i:5037 | awk '{print $2}' | sed -n '2p'"
+                val pid = shellExec.executeCmd(cmd)
+                if (StringUtils.isNotBlank(pid)) {
+                    shellExec.executeCmd("kill -9 $pid")
+                }
+                return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+            }, Predicate.isEqual(false))
+            shellExec.executeCmd("adb -a nodaemon server &")
             shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
                 return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
