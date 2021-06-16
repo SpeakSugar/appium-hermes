@@ -74,14 +74,11 @@ object HermesClientFactory {
                 LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
             }
         } else {
-            RetryUtil.call(Callable {
-                val cmd = "lsof -i:5037 | awk '{print $2}' | sed -n '2p'"
-                val pid = shellExec.executeCmd(cmd)
-                if (StringUtils.isNotBlank(pid)) {
-                    shellExec.executeCmd("kill -9 $pid")
-                }
-                return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
-            }, Predicate.isEqual(false))
+            val cmd = "lsof -i:5037 | awk '{print $2}' | sed -n '2p'"
+            val pid = shellExec.executeCmd(cmd)
+            if (StringUtils.isNotBlank(pid)) {
+                shellExec.executeCmd("kill -9 $pid")
+            }
             shellExec.executeCmd("adb -a nodaemon server &")
             shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
