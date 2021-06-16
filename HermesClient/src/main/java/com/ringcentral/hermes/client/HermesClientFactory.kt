@@ -41,7 +41,7 @@ object HermesClientFactory {
         val capabilities = ReflectUtil.getValueFromParentClass(driver, "org.openqa.selenium.remote.RemoteWebDriver", "capabilities") as Capabilities
         val udid = capabilities.getCapability("udid")
         val platformName = driver.platformName
-        val hermesPort = appiumUrl.port - 1000
+        val hermesPort = appiumUrl.port + 5000
         val hostName = appiumUrl.host
         var hermesUrl = "http://$hostName:$hermesPort"
         val shellExec = ShellFactory.getShellExec(hostName)
