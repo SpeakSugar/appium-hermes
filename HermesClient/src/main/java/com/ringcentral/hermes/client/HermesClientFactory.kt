@@ -3,7 +3,6 @@ package com.ringcentral.hermes.client
 import com.ringcentral.hermes.devicespy.DevicePoolApiClient
 import com.ringcentral.hermes.util.ReflectUtil
 import com.ringcentral.hermes.util.RetryUtil
-import com.ringcentral.hermes.util.ShellUtil
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.android.appmanagement.AndroidInstallApplicationOptions
 import org.apache.commons.lang3.StringUtils
@@ -55,11 +54,20 @@ object HermesClientFactory {
                 return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
             }, Predicate.isEqual(false))
             val driverWait = WebDriverWait(driver, 5)
-            val expectedConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='OK']"))
+            val okButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='OK']"))
             RetryUtil.call(Callable {
                 try {
-                    driverWait.until(expectedConditions).click()
-                    return@Callable driverWait.until(expectedConditions).isDisplayed
+                    driverWait.until(okButtonConditions).click()
+                    return@Callable driverWait.until(okButtonConditions).isDisplayed
+                } catch (e: Exception) {
+                    return@Callable false
+                }
+            }, Predicate.isEqual(true))
+            val dontAllowButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='Don’t Allow']"))
+            RetryUtil.call(Callable {
+                try {
+                    driverWait.until(dontAllowButtonConditions).click()
+                    return@Callable driverWait.until(dontAllowButtonConditions).isDisplayed
                 } catch (e: Exception) {
                     return@Callable false
                 }
