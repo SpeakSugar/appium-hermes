@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
@@ -19,7 +18,6 @@ public class ShellUtil implements ShellFactory.ShellExec {
         InputStreamReader isr = null;
         LineNumberReader input = null;
         try {
-            LOG.info("execute cmd is: " + completeCmd);
             StringBuilder sb = new StringBuilder();
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", completeCmd}, null, null);
             isr = new InputStreamReader(process.getInputStream());

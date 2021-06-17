@@ -10,5 +10,9 @@ public class DeviceSpyClientTest {
         System.out.println(new DevicePoolApiClient("10.32.46.148").executeCmd("lsof -i:7614 | awk '{print $2}' | sed -n '2p'"));
     }
 
+    @Test
+    public void spyTest() {
+        System.out.println(new DevicePoolApiClient("10.32.46.148").getAdbPort("RF8M41HVHKK"));
+    }
 
 }

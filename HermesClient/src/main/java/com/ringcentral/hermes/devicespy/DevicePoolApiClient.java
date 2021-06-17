@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +52,26 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
             }
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    public String getAdbPort(String udid) {
+        try {
+            Call<DevicePoolResponse> call = devicePoolService.fetchDevices(true);
+            Response<DevicePoolResponse> response = call.execute();
+            if (response.code() >= 200 && response.code() < 400) {
+                List<DeviceCapabilities> deviceCapabilitiesList = response.body().getData();
+                for (DeviceCapabilities deviceCapabilities : deviceCapabilitiesList) {
+                    if (deviceCapabilities.getCapabilities().getUdid().equals(udid)) {
+                        return String.valueOf(deviceCapabilities.getCapabilities().getAdbPort());
+                    }
+                }
+                throw new RuntimeException("Can't find device with udid: " + udid);
+            } else {
+                throw new RuntimeException();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
