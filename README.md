@@ -37,7 +37,7 @@ And you can intergrate **Hermes-client** in your java appium testing framework p
   <dependency>
       <groupId>com.github.SpeakSugar</groupId>
       <artifactId>appium-hermes</artifactId>
-      <version>c2344b22c3</version>
+      <version>a7671b47da</version>
   </dependency>
 ```
 ```java
