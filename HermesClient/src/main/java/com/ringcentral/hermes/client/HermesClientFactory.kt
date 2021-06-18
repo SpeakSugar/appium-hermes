@@ -97,6 +97,7 @@ object HermesClientFactory {
                 }
                 return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
             }, Predicate.isEqual(false))
+            shellExec.executeCmd("adb connect $udid")
             shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
                 return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
