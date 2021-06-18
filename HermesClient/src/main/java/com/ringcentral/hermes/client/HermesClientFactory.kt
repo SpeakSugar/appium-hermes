@@ -83,6 +83,12 @@ object HermesClientFactory {
             }
         } else {
             val shellExec = ShellFactory.getShellExec("127.0.0.1")
+            if (hostName != "127.0.0.1") {
+                val adbPort = DevicePoolApiClient(hostName).getAdbPort(udid)
+                udid = "$hostName:$adbPort"
+                hermesPort = adbPort.toInt() + 1000
+                hostName = "127.0.0.1"
+            }
             RetryUtil.call(Callable {
                 val cmd = "lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"
                 val pid = shellExec.executeCmd(cmd)
@@ -91,12 +97,6 @@ object HermesClientFactory {
                 }
                 return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
             }, Predicate.isEqual(false))
-            if (hostName != "127.0.0.1") {
-                val adbPort = DevicePoolApiClient(hostName).getAdbPort(udid)
-                udid = "$hostName:$adbPort"
-                hermesPort = adbPort.toInt() + 1000
-                hostName = "127.0.0.1"
-            }
             shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
                 return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
