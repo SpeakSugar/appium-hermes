@@ -63,11 +63,11 @@ object HermesClientFactory {
                     return@Callable false
                 }
             }, Predicate.isEqual(true))
-            val dontAllowButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='Don’t Allow']"))
+            val wlanCellularButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
             RetryUtil.call(Callable {
                 try {
-                    driverWait.until(dontAllowButtonConditions).click()
-                    return@Callable driverWait.until(dontAllowButtonConditions).isDisplayed
+                    driverWait.until(wlanCellularButtonConditions).click()
+                    return@Callable driverWait.until(wlanCellularButtonConditions).isDisplayed
                 } catch (e: Exception) {
                     return@Callable false
                 }
