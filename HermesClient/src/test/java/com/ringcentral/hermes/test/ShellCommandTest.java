@@ -13,6 +13,11 @@ public class ShellCommandTest {
         new ShellUtil().executeCmd("kill -9 " + pid);
     }
 
+    @Test
+    public void shellTest2() {
+        System.out.println(new ShellUtil().executeCmd("adb devices"));
+    }
+
 
 
 }

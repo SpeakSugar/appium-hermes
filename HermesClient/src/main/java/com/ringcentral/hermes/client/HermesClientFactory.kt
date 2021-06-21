@@ -1,6 +1,7 @@
 package com.ringcentral.hermes.client
 
 import com.ringcentral.hermes.devicespy.DevicePoolApiClient
+import com.ringcentral.hermes.exception.HermesException
 import com.ringcentral.hermes.util.ReflectUtil
 import com.ringcentral.hermes.util.RetryUtil
 import io.appium.java_client.AppiumDriver
@@ -23,6 +24,16 @@ object HermesClientFactory {
     lateinit var contactApiClient: ContactApiClient
 
     lateinit var calendarApiClient: CalendarApiClient
+
+    var adbPath: String = {
+        var adbEnv = System.getenv("ADB")
+        if (adbEnv == null || adbEnv.isEmpty()) {
+            adbEnv = ""
+        } else if (!adbEnv.endsWith("/")) {
+            adbEnv += "/"
+        }
+        adbEnv
+    }()
 
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
         //1. install hermes app, and launch it
@@ -97,12 +108,16 @@ object HermesClientFactory {
                 }
                 return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
             }, Predicate.isEqual(false))
-            shellExec.executeCmd("adb connect $udid")
-            shellExec.executeCmd("adb -s $udid forward tcp:$hermesPort tcp:8080")
             RetryUtil.call(Callable {
+                shellExec.executeCmd("${adbPath}adb connect $udid")
+                return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
+            }, Predicate.isEqual<Boolean>(false), 10, HermesException("${adbPath}adb connect $udid failed"))
+            RetryUtil.call(Callable {
+                shellExec.executeCmd("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080")
+                Thread.sleep(2000)
                 return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
-            }, Predicate.isEqual<Boolean>(true))
-            LOG.info("adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+            }, Predicate.isEqual<Boolean>(true), 15, HermesException("adb port mapping failed"))
+            LOG.info("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
         }
         val hermesUrl = "http://$hostName:$hermesPort"
         //3. init singleton api clients
