@@ -36,7 +36,8 @@ object HermesClientFactory {
     }()
 
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
-        try {//1. install hermes app, and launch it
+        try {
+            //1. install hermes app, and launch it
             if (driver.isAppInstalled("org.ringcentral.hermes")) {
                 LOG.info("start to delete hermes app...")
                 driver.removeApp("org.ringcentral.hermes")
@@ -88,9 +89,9 @@ object HermesClientFactory {
                 } else {
                     shellExec.executeCmd("iproxy -u $udid -s 0.0.0.0 $hermesPort:8080 &")
                     RetryUtil.call(Callable {
-                        return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+                        return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | grep iproxy | awk '{print $2}'"))
                     }, Predicate.isEqual<Boolean>(true))
-                    LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+                    LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | grep iproxy | awk '{print $2}'"))
                 }
             } else {
                 val shellExec = ShellFactory.getShellExec("127.0.0.1")
@@ -115,9 +116,9 @@ object HermesClientFactory {
                 RetryUtil.call(Callable {
                     shellExec.executeCmd("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080")
                     Thread.sleep(2000)
-                    return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+                    return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | grep adb | awk '{print $2}'"))
                 }, Predicate.isEqual<Boolean>(true), 15, HermesException("adb port mapping failed"))
-                LOG.info("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+                LOG.info("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | grep adb | awk '{print $2}'"))
             }
             val hermesUrl = "http://$hostName:$hermesPort"
             //3. init singleton api clients
