@@ -57,14 +57,6 @@ object HermesClientFactory {
             var hostName = appiumUrl.host
             if (platformName == "ios") {
                 val shellExec = ShellFactory.getShellExec(hostName)
-                RetryUtil.call(Callable {
-                    val cmd = "lsof -i:$hermesPort | grep iproxy | awk '{print $2}'"
-                    val pid = shellExec.executeCmd(cmd)
-                    if (StringUtils.isNotBlank(pid)) {
-                        shellExec.executeCmd("kill -9 $pid")
-                    }
-                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
-                }, Predicate.isEqual(false))
                 val driverWait = WebDriverWait(driver, 5)
                 val okButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='OK']"))
                 RetryUtil.call(Callable {
@@ -101,14 +93,6 @@ object HermesClientFactory {
                     hermesPort = adbPort.toInt() + 1000
                     hostName = "127.0.0.1"
                 }
-                RetryUtil.call(Callable {
-                    val cmd = "lsof -i:$hermesPort | grep adb | awk '{print $2}'"
-                    val pid = shellExec.executeCmd(cmd)
-                    if (StringUtils.isNotBlank(pid)) {
-                        shellExec.executeCmd("kill -9 $pid")
-                    }
-                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
-                }, Predicate.isEqual(false))
                 RetryUtil.call(Callable {
                     shellExec.executeCmd("${adbPath}adb connect $udid")
                     return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
