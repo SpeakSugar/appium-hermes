@@ -36,93 +36,100 @@ object HermesClientFactory {
     }()
 
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
-        //1. install hermes app, and launch it
-        if (driver.isAppInstalled("org.ringcentral.hermes")) {
-            LOG.info("start to delete hermes app...")
-            driver.removeApp("org.ringcentral.hermes")
-            LOG.info("delete hermes app success.")
-        }
-        LOG.info("start to install hermes app...")
-        driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
-        LOG.info("hermes app install success.")
-        driver.activateApp("org.ringcentral.hermes")
-        LOG.info("hermes app activate success.")
-        //2. port mapping, ios permission grant
-        val appiumUrl = ReflectUtil.getValueFromParentClass(driver, "io.appium.java_client.AppiumDriver", "remoteAddress") as URL
-        val capabilities = ReflectUtil.getValueFromParentClass(driver, "org.openqa.selenium.remote.RemoteWebDriver", "capabilities") as Capabilities
-        var udid = capabilities.getCapability("udid") as String
-        val platformName = driver.platformName
-        var hermesPort = appiumUrl.port + 5000
-        var hostName = appiumUrl.host
-        if (platformName == "ios") {
-            val shellExec = ShellFactory.getShellExec(hostName)
-            RetryUtil.call(Callable {
-                val cmd = "lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"
-                val pid = shellExec.executeCmd(cmd)
-                if (StringUtils.isNotBlank(pid)) {
-                    shellExec.executeCmd("kill -9 $pid")
-                }
-                return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
-            }, Predicate.isEqual(false))
-            val driverWait = WebDriverWait(driver, 5)
-            val okButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='OK']"))
-            RetryUtil.call(Callable {
-                try {
-                    driverWait.until(okButtonConditions).click()
-                    return@Callable driverWait.until(okButtonConditions).isDisplayed
-                } catch (e: Exception) {
-                    return@Callable false
-                }
-            }, Predicate.isEqual(true))
-            val wlanCellularButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
-            RetryUtil.call(Callable {
-                try {
-                    driverWait.until(wlanCellularButtonConditions).click()
-                    return@Callable driverWait.until(wlanCellularButtonConditions).isDisplayed
-                } catch (e: Exception) {
-                    return@Callable false
-                }
-            }, Predicate.isEqual(true))
-            if (hermesAppPath.contains(".zip")) {
-                hermesPort = 8080
-            } else {
-                shellExec.executeCmd("iproxy -u $udid -s 0.0.0.0 $hermesPort:8080 &")
+        try {//1. install hermes app, and launch it
+            if (driver.isAppInstalled("org.ringcentral.hermes")) {
+                LOG.info("start to delete hermes app...")
+                driver.removeApp("org.ringcentral.hermes")
+                LOG.info("delete hermes app success.")
+            }
+            LOG.info("start to install hermes app...")
+            driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
+            LOG.info("hermes app install success.")
+            driver.activateApp("org.ringcentral.hermes")
+            LOG.info("hermes app activate success.")
+            //2. port mapping, ios permission grant
+            val appiumUrl = ReflectUtil.getValueFromParentClass(driver, "io.appium.java_client.AppiumDriver", "remoteAddress") as URL
+            val capabilities = ReflectUtil.getValueFromParentClass(driver, "org.openqa.selenium.remote.RemoteWebDriver", "capabilities") as Capabilities
+            var udid = capabilities.getCapability("udid") as String
+            val platformName = driver.platformName
+            var hermesPort = appiumUrl.port + 5000
+            var hostName = appiumUrl.host
+            if (platformName == "ios") {
+                val shellExec = ShellFactory.getShellExec(hostName)
                 RetryUtil.call(Callable {
-                    return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
-                }, Predicate.isEqual<Boolean>(true))
-                LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
-            }
-        } else {
-            val shellExec = ShellFactory.getShellExec("127.0.0.1")
-            if (hostName != "127.0.0.1") {
-                val adbPort = DevicePoolApiClient(hostName).getAdbPort(udid)
-                udid = "$hostName:$adbPort"
-                hermesPort = adbPort.toInt() + 1000
-                hostName = "127.0.0.1"
-            }
-            RetryUtil.call(Callable {
-                val cmd = "lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"
-                val pid = shellExec.executeCmd(cmd)
-                if (StringUtils.isNotBlank(pid)) {
-                    shellExec.executeCmd("kill -9 $pid")
+                    val cmd = "lsof -i:$hermesPort | grep iproxy | awk '{print $2}'"
+                    val pid = shellExec.executeCmd(cmd)
+                    if (StringUtils.isNotBlank(pid)) {
+                        shellExec.executeCmd("kill -9 $pid")
+                    }
+                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+                }, Predicate.isEqual(false))
+                val driverWait = WebDriverWait(driver, 5)
+                val okButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='OK']"))
+                RetryUtil.call(Callable {
+                    try {
+                        driverWait.until(okButtonConditions).click()
+                        return@Callable driverWait.until(okButtonConditions).isDisplayed
+                    } catch (e: Exception) {
+                        return@Callable false
+                    }
+                }, Predicate.isEqual(true))
+                val wlanCellularButtonConditions = ExpectedConditions.presenceOfElementLocated(By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
+                RetryUtil.call(Callable {
+                    try {
+                        driverWait.until(wlanCellularButtonConditions).click()
+                        return@Callable driverWait.until(wlanCellularButtonConditions).isDisplayed
+                    } catch (e: Exception) {
+                        return@Callable false
+                    }
+                }, Predicate.isEqual(true))
+                if (hermesAppPath.contains(".zip")) {
+                    hermesPort = 8080
+                } else {
+                    shellExec.executeCmd("iproxy -u $udid -s 0.0.0.0 $hermesPort:8080 &")
+                    RetryUtil.call(Callable {
+                        return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+                    }, Predicate.isEqual<Boolean>(true))
+                    LOG.info("iproxy $hermesPort 8080 $udid pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
                 }
-                return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
-            }, Predicate.isEqual(false))
-            RetryUtil.call(Callable {
-                shellExec.executeCmd("${adbPath}adb connect $udid")
-                return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
-            }, Predicate.isEqual<Boolean>(false), 10, HermesException("${adbPath}adb connect $udid failed"))
-            RetryUtil.call(Callable {
-                shellExec.executeCmd("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080")
-                Thread.sleep(2000)
-                return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
-            }, Predicate.isEqual<Boolean>(true), 15, HermesException("adb port mapping failed"))
-            LOG.info("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+            } else {
+                val shellExec = ShellFactory.getShellExec("127.0.0.1")
+                if (hostName != "127.0.0.1") {
+                    val adbPort = DevicePoolApiClient(hostName).getAdbPort(udid)
+                    udid = "$hostName:$adbPort"
+                    hermesPort = adbPort.toInt() + 1000
+                    hostName = "127.0.0.1"
+                }
+                RetryUtil.call(Callable {
+                    val cmd = "lsof -i:$hermesPort | grep adb | awk '{print $2}'"
+                    val pid = shellExec.executeCmd(cmd)
+                    if (StringUtils.isNotBlank(pid)) {
+                        shellExec.executeCmd("kill -9 $pid")
+                    }
+                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+                }, Predicate.isEqual(false))
+                RetryUtil.call(Callable {
+                    shellExec.executeCmd("${adbPath}adb connect $udid")
+                    return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
+                }, Predicate.isEqual<Boolean>(false), 10, HermesException("${adbPath}adb connect $udid failed"))
+                RetryUtil.call(Callable {
+                    shellExec.executeCmd("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080")
+                    Thread.sleep(2000)
+                    return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+                }, Predicate.isEqual<Boolean>(true), 15, HermesException("adb port mapping failed"))
+                LOG.info("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | awk '{print $2}' | sed -n '2p'"))
+            }
+            val hermesUrl = "http://$hostName:$hermesPort"
+            //3. init singleton api clients
+            contactApiClient = ContactApiClient(hermesUrl)
+            calendarApiClient = CalendarApiClient(hermesUrl)
+        } catch (e: Exception) {
+            if (e is HermesException) {
+                throw e
+            } else {
+                throw HermesException("Undefine Exception", e)
+            }
         }
-        val hermesUrl = "http://$hostName:$hermesPort"
-        //3. init singleton api clients
-        contactApiClient = ContactApiClient(hermesUrl)
-        calendarApiClient = CalendarApiClient(hermesUrl)
     }
 
 }

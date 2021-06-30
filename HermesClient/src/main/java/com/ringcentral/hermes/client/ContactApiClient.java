@@ -1,6 +1,7 @@
 package com.ringcentral.hermes.client;
 
 import com.ringcentral.hermes.client.contact.iContactService;
+import com.ringcentral.hermes.exception.HermesException;
 import com.ringcentral.hermes.request.contact.ContactReq;
 import com.ringcentral.hermes.response.ResponseBean;
 import com.ringcentral.hermes.response.contact.ContactRsp;
@@ -38,7 +39,7 @@ public class ContactApiClient {
             Call<ResponseBean> call = contactService.testApi();
             return call.execute().body();
         } catch (IOException e) {
-           throw new RuntimeException();
+            throw new HermesException("IOException", e);
         }
     }
 
@@ -47,7 +48,7 @@ public class ContactApiClient {
             Call<ResponseBean<List<ContactRsp>>> call = contactService.findContact();
             return call.execute().body();
         } catch (IOException e) {
-            throw new RuntimeException();
+            throw new HermesException("IOException", e);
         }
     }
 
@@ -56,7 +57,7 @@ public class ContactApiClient {
             Call<ResponseBean> call = contactService.addContact(contactReq);
             return call.execute().body();
         } catch (IOException e) {
-            throw new RuntimeException();
+            throw new HermesException("IOException", e);
         }
     }
 
@@ -65,7 +66,7 @@ public class ContactApiClient {
             Call<ResponseBean> call = contactService.deleteContact(id);
             return call.execute().body();
         } catch (IOException e) {
-            throw new RuntimeException();
+            throw new HermesException("IOException", e);
         }
     }
 }

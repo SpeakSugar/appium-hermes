@@ -6,4 +6,8 @@ public class HermesException extends RuntimeException {
         super(msg);
     }
 
+    public HermesException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
 }
