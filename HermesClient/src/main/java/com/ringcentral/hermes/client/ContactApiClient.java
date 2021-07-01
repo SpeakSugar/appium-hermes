@@ -24,8 +24,8 @@ public class ContactApiClient {
 
     protected ContactApiClient(String url) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(10, TimeUnit.SECONDS)
-                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
                 .build();
         contactService = new Retrofit.Builder()
                 .baseUrl(url)

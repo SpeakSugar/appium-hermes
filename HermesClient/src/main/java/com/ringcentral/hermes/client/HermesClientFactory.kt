@@ -6,6 +6,7 @@ import com.ringcentral.hermes.util.ReflectUtil
 import com.ringcentral.hermes.util.RetryUtil
 import io.appium.java_client.AppiumDriver
 import io.appium.java_client.android.appmanagement.AndroidInstallApplicationOptions
+import io.appium.java_client.appmanagement.ApplicationState
 import org.apache.commons.lang3.StringUtils
 import org.openqa.selenium.By
 import org.openqa.selenium.Capabilities
@@ -37,16 +38,21 @@ object HermesClientFactory {
 
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
         try {
+            val bundleId = "org.ringcentral.hermes"
             //1. install hermes app, and launch it
-            if (driver.isAppInstalled("org.ringcentral.hermes")) {
+            if (driver.isAppInstalled(bundleId)) {
                 LOG.info("start to delete hermes app...")
-                driver.removeApp("org.ringcentral.hermes")
+                driver.removeApp(bundleId)
                 LOG.info("delete hermes app success.")
             }
             LOG.info("start to install hermes app...")
             driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
             LOG.info("hermes app install success.")
-            driver.activateApp("org.ringcentral.hermes")
+            RetryUtil.call(Callable {
+                driver.activateApp(bundleId)
+                Thread.sleep(2000)
+                return@Callable driver.queryAppState(bundleId) == ApplicationState.RUNNING_IN_FOREGROUND
+            }, Predicate.isEqual<Boolean>(false), 10, HermesException("hermes app activate failed."))
             LOG.info("hermes app activate success.")
             //2. port mapping, ios permission grant
             val appiumUrl = ReflectUtil.getValueFromParentClass(driver, "io.appium.java_client.AppiumDriver", "remoteAddress") as URL
@@ -93,6 +99,14 @@ object HermesClientFactory {
                     hermesPort = adbPort.toInt() + 1000
                     hostName = "127.0.0.1"
                 }
+                RetryUtil.call(Callable {
+                    val cmd = "lsof -i:$hermesPort | grep adb | awk '{print $2}'"
+                    val pid = shellExec.executeCmd(cmd)
+                    if (StringUtils.isNotBlank(pid)) {
+                        shellExec.executeCmd("${adbPath}adb forward --remove tcp:$hermesPort")
+                    }
+                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+                }, Predicate.isEqual(false))
                 RetryUtil.call(Callable {
                     shellExec.executeCmd("${adbPath}adb connect $udid")
                     return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
