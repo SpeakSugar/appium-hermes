@@ -11,12 +11,20 @@ import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class ContactsApiTest {
@@ -29,7 +37,7 @@ public class ContactsApiTest {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "ios");
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "14");
-            capabilities.setCapability(MobileCapabilityType.UDID, "FE89B3AF-C403-4B2D-8921-99F03FB3446D");
+            capabilities.setCapability(MobileCapabilityType.UDID, "b5583a038634ad52c57b7be22d7af246fdc30bfa");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
@@ -75,17 +83,17 @@ public class ContactsApiTest {
     public void iosFindContactTest() {
         driver = createIOSDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/Hermes.zip");
         ResponseBean<List<ContactRsp>> responseBean = HermesClientFactory.INSTANCE.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
     }
 
     @Test
-    public void iosAddContact() {
+    public void iosAddContact() throws IOException {
         driver = createIOSDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/Hermes.ipa");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -93,13 +101,20 @@ public class ContactsApiTest {
         email.setType("work");
         email.setValue("296995537@qq.com");
         contactReq.setEmails(Lists.newArrayList(email));
+
+        // Add avatar
+        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+        String s = Base64.getEncoder().encodeToString(bytes);
+        contactReq.setAvatar(s);
+
         ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().addContact(contactReq);
         System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
         driver.quit();
     }
 
     @Test
-    public void androidAddContact() {
+    public void androidAddContact() throws IOException {
         driver = createAndroidDriver();
         System.out.println(driver.getSessionId());
         HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
@@ -110,6 +125,14 @@ public class ContactsApiTest {
         email.setType("work");
         email.setValue("296995537@qq.com");
         contactReq.setEmails(Lists.newArrayList(email));
+
+        // Add avatar
+        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+        String s = Base64.getEncoder().encodeToString(bytes);
+        contactReq.setAvatar(s);
+
+
         ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().addContact(contactReq);
         System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
         driver.quit();
@@ -123,6 +146,15 @@ public class ContactsApiTest {
         ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().deleteContact("3354");
         System.out.println(responseBean.getReturnMsg());
         driver.quit();
+    }
+
+    @Test
+    public void imgToStringTest() throws IOException {
+        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+        String s = Base64.getEncoder().encodeToString(bytes);
+        File file = new File("AvatarCopy.jpg");
+        FileUtils.writeByteArrayToFile(file, Base64.getDecoder().decode(s));
     }
 
 }

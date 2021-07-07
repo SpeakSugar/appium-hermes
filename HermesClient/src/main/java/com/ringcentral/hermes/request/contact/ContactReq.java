@@ -10,6 +10,8 @@ public class ContactReq {
 
     private String familyName;
 
+    private String avatar;
+
     private List<PhoneNumber> phoneNumbers;
 
     private List<Email> emails;
@@ -32,6 +34,14 @@ public class ContactReq {
 
     public String getFamilyName() {
         return familyName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public void setFamilyName(String familyName) {
