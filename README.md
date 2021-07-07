@@ -75,7 +75,8 @@ And use contact api like below:
  contactReq.setEmails(emailList);
  InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
  String avatarBase64 = Base64.getEncoder().encodeToString(IOUtils.toByteArray(inputStream));
- contactReq.setAvatar(avatarBase64); contactReq.setPhoneNumbers(phoneNumberList);
+ contactReq.setAvatar(avatarBase64); 
+ contactReq.setPhoneNumbers(phoneNumberList);
  contactApiClient.addContact(contactReq);
 ```
 # License
