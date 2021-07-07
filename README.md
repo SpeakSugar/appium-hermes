@@ -37,7 +37,7 @@ And you can intergrate **Hermes-client** in your java appium testing framework p
   <dependency>
       <groupId>com.github.SpeakSugar</groupId>
       <artifactId>appium-hermes</artifactId>
-      <version>71397459f0</version>
+      <version>a0024bb644</version>
   </dependency>
 ```
 ```java
@@ -73,7 +73,9 @@ And use contact api like below:
  contactReq.setFirstName("Jeffries");
  contactReq.setFamilyName("Yu");
  contactReq.setEmails(emailList);
- contactReq.setPhoneNumbers(phoneNumberList);
+ InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+ String avatarBase64 = Base64.getEncoder().encodeToString(IOUtils.toByteArray(inputStream));
+ contactReq.setAvatar(avatarBase64); contactReq.setPhoneNumbers(phoneNumberList);
  contactApiClient.addContact(contactReq);
 ```
 # License
