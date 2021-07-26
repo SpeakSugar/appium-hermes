@@ -150,7 +150,7 @@ public class ContactsApiTest {
 
     @Test
     public void imgToStringTest() throws IOException {
-        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("Avatar.jpg");
         byte[] bytes = IOUtils.toByteArray(inputStream);
         String s = Base64.getEncoder().encodeToString(bytes);
         File file = new File("AvatarCopy.jpg");
