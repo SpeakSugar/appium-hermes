@@ -100,17 +100,17 @@ object HermesClientFactory {
                     hostName = "127.0.0.1"
                 }
                 RetryUtil.call(Callable {
-                    val cmd = "lsof -i:$hermesPort | grep adb | awk '{print $2}'"
-                    val pid = shellExec.executeCmd(cmd)
-                    if (StringUtils.isNotBlank(pid)) {
-                        shellExec.executeCmd("${adbPath}adb forward --remove tcp:$hermesPort")
-                    }
-                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
-                }, Predicate.isEqual(false))
-                RetryUtil.call(Callable {
                     shellExec.executeCmd("${adbPath}adb connect $udid")
                     return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
                 }, Predicate.isEqual<Boolean>(false), 10, HermesException("${adbPath}adb connect $udid failed"))
+                RetryUtil.call(Callable {
+                    val cmd = "lsof -i:$hermesPort | grep adb | awk '{print $2}'"
+                    val pid = shellExec.executeCmd(cmd)
+                    if (StringUtils.isNotBlank(pid)) {
+                        shellExec.executeCmd("${adbPath}adb -s $udid forward --remove tcp:$hermesPort")
+                    }
+                    return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+                }, Predicate.isEqual(false))
                 RetryUtil.call(Callable {
                     shellExec.executeCmd("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080")
                     Thread.sleep(2000)

@@ -14,7 +14,12 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +42,7 @@ public class ContactsApiTest {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "ios");
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "14");
-            capabilities.setCapability(MobileCapabilityType.UDID, "b5583a038634ad52c57b7be22d7af246fdc30bfa");
+            capabilities.setCapability(MobileCapabilityType.UDID, "FE89B3AF-C403-4B2D-8921-99F03FB3446D");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
@@ -93,7 +98,7 @@ public class ContactsApiTest {
     public void iosAddContact() throws IOException {
         driver = createIOSDriver();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/Hermes.ipa");
+        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/appium-hermes.zip");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -153,8 +158,30 @@ public class ContactsApiTest {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("Avatar.jpg");
         byte[] bytes = IOUtils.toByteArray(inputStream);
         String s = Base64.getEncoder().encodeToString(bytes);
+        System.out.println(s);
         File file = new File("AvatarCopy.jpg");
         FileUtils.writeByteArrayToFile(file, Base64.getDecoder().decode(s));
     }
 
+    @Test
+    public void stringToImg() throws IOException {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("avatar.txt");
+        String s = IOUtils.toString(inputStream);
+        File file = new File("AvatarCopy.jpg");
+        FileUtils.writeByteArrayToFile(file, Base64.getDecoder().decode(s));
+    }
+
+    @Test
+    public void testStartAppTime() {
+        driver = createAndroidDriver();
+        driver.removeApp("com.glip.mobile.qa");
+        driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.3.20.002-xmn-up-inhouse-release.apk");
+        long startTimeMillis = System.currentTimeMillis();
+        driver.activateApp("com.glip.mobile.qa");
+        WebDriverWait driverWait = new WebDriverWait(driver, 10);
+        ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@text='Sign in' or  @text='Switch accounts']"));
+        driverWait.until(expectedCondition);
+        System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
+        driver.quit();
+    }
 }
