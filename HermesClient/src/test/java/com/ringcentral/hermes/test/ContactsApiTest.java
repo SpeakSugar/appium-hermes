@@ -41,8 +41,8 @@ public class ContactsApiTest {
         try {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "ios");
-            capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "14");
-            capabilities.setCapability(MobileCapabilityType.UDID, "FE89B3AF-C403-4B2D-8921-99F03FB3446D");
+            capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15");
+            capabilities.setCapability(MobileCapabilityType.UDID, "881BE1B7-2FE6-407D-AC22-6E46B4F7F2C4");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
@@ -172,16 +172,34 @@ public class ContactsApiTest {
     }
 
     @Test
-    public void testStartAppTime() {
-        driver = createAndroidDriver();
-        driver.removeApp("com.glip.mobile.qa");
-        driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.3.20.002-xmn-up-inhouse-release.apk");
-        long startTimeMillis = System.currentTimeMillis();
-        driver.activateApp("com.glip.mobile.qa");
-        WebDriverWait driverWait = new WebDriverWait(driver, 10);
-        ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@text='Sign in' or  @text='Switch accounts']"));
-        driverWait.until(expectedCondition);
-        System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
-        driver.quit();
+    public void testStartAndroidAppTime() {
+        for (int i = 0; i < 1; i++) {
+            driver = createAndroidDriver();
+            driver.removeApp("com.glip.mobile.qa");
+            driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.3.20.001-xmn-up-inhouse-release.apk");
+            long startTimeMillis = System.currentTimeMillis();
+            driver.activateApp("com.glip.mobile.qa");
+            WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
+            ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@text='Sign in' or  @text='Switch accounts']"));
+            driverWait.until(expectedCondition);
+            System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
+            driver.quit();
+        }
+    }
+
+    @Test
+    public void testStartiOSAppTime() {
+        for (int i = 0; i < 10; i++) {
+            driver = createIOSDriver();
+            driver.removeApp("com.glip.mobile.rc");
+            driver.installApp("/Users/jeffries.yu/Downloads/Payload/Glip.zip");
+            long startTimeMillis = System.currentTimeMillis();
+            driver.activateApp("com.glip.mobile.rc");
+            WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
+            ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@text='Sign in' or  @text='Switch accounts']"));
+            driverWait.until(expectedCondition);
+            System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
+            driver.quit();
+        }
     }
 }
