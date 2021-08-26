@@ -22,7 +22,7 @@ public class ContactApiClient {
 
     private iContactService contactService;
 
-    protected ContactApiClient(String url) {
+    public ContactApiClient(String url) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
@@ -46,7 +46,12 @@ public class ContactApiClient {
     public ResponseBean<List<ContactRsp>> findContact() {
         try {
             Call<ResponseBean<List<ContactRsp>>> call = contactService.findContact();
-            return call.execute().body();
+            ResponseBean<List<ContactRsp>> responseBean = call.execute().body();
+            if (responseBean.getReturnCode() == 200) {
+                return responseBean;
+            } else {
+                throw new HermesException(responseBean.getReturnMsg());
+            }
         } catch (IOException e) {
             throw new HermesException("IOException", e);
         }
@@ -55,7 +60,12 @@ public class ContactApiClient {
     public ResponseBean addContact(ContactReq contactReq) {
         try {
             Call<ResponseBean> call = contactService.addContact(contactReq);
-            return call.execute().body();
+            ResponseBean<List<ContactRsp>> responseBean = call.execute().body();
+            if (responseBean.getReturnCode() == 200) {
+                return responseBean;
+            } else {
+                throw new HermesException(responseBean.getReturnMsg());
+            }
         } catch (IOException e) {
             throw new HermesException("IOException", e);
         }
@@ -64,7 +74,12 @@ public class ContactApiClient {
     public ResponseBean deleteContact(String id) {
         try {
             Call<ResponseBean> call = contactService.deleteContact(id);
-            return call.execute().body();
+            ResponseBean<List<ContactRsp>> responseBean = call.execute().body();
+            if (responseBean.getReturnCode() == 200) {
+                return responseBean;
+            } else {
+                throw new HermesException(responseBean.getReturnMsg());
+            }
         } catch (IOException e) {
             throw new HermesException("IOException", e);
         }

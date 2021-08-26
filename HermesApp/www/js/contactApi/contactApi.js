@@ -11,7 +11,7 @@ function contactApi() {
                     function (success) {
                         response(request, {returnCode: 200, returnMsg: "add contact success"})
                     }, function (error) {
-                        response(request, {returnCode: 500, returnMsg: JSON.stringify(request.body)})
+                        response(request, {returnCode: 500, returnMsg: JSON.stringify(error)})
                     })
             }
 
@@ -19,7 +19,7 @@ function contactApi() {
                 window.ContactsX.find(function (contacts) {
                     response(request, {returnCode: 200, returnMsg: "find contact success", content: contacts})
                 }, function (error) {
-                    response(request, {returnCode: 500, returnMsg: JSON.stringify(error)})
+                    response(request, {returnCode: 500, returnMsg: JSON.stringify(error), content: []})
                 }, {
                     fields: {
                         firstName: true,
@@ -36,7 +36,7 @@ function contactApi() {
                     function (success) {
                         response(request, {returnCode: 200, returnMsg: "delete contact success"})
                     }, function (error) {
-                        response(request, {returnCode: 500, returnMsg: JSON.stringify(request.body)})
+                        response(request, {returnCode: 500, returnMsg: JSON.stringify(error)})
                     })
             }
         }

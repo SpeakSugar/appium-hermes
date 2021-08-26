@@ -18,7 +18,7 @@ import java.net.URL
 import java.util.concurrent.Callable
 import java.util.function.Predicate
 
-object HermesClientFactory {
+class HermesClientFactory {
 
     private val LOG: Logger = LoggerFactory.getLogger(HermesClientFactory::class.java)
 

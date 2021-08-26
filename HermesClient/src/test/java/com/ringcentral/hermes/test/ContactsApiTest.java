@@ -2,11 +2,13 @@ package com.ringcentral.hermes.test;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.ringcentral.hermes.client.ContactApiClient;
 import com.ringcentral.hermes.client.HermesClientFactory;
 import com.ringcentral.hermes.request.contact.ContactReq;
 import com.ringcentral.hermes.response.ResponseBean;
 import com.ringcentral.hermes.response.contact.ContactRsp;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileBy;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -14,6 +16,7 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.omg.PortableInterceptor.Interceptor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -30,6 +33,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 
 public class ContactsApiTest {
@@ -77,9 +81,10 @@ public class ContactsApiTest {
     @Test
     public void androidFindContactTest() {
         driver = createAndroidDriver();
+        HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
-        ResponseBean<List<ContactRsp>> responseBean = HermesClientFactory.INSTANCE.getContactApiClient().findContact();
+        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        ResponseBean<List<ContactRsp>> responseBean = hcf.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
     }
@@ -87,9 +92,10 @@ public class ContactsApiTest {
     @Test
     public void iosFindContactTest() {
         driver = createIOSDriver();
+        HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/Hermes.zip");
-        ResponseBean<List<ContactRsp>> responseBean = HermesClientFactory.INSTANCE.getContactApiClient().findContact();
+        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/Hermes.zip");
+        ResponseBean<List<ContactRsp>> responseBean = hcf.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
     }
@@ -97,8 +103,9 @@ public class ContactsApiTest {
     @Test
     public void iosAddContact() throws IOException {
         driver = createIOSDriver();
+        HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/appium-hermes.zip");
+        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/appium-hermes.zip");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -113,7 +120,7 @@ public class ContactsApiTest {
         String s = Base64.getEncoder().encodeToString(bytes);
         contactReq.setAvatar(s);
 
-        ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().addContact(contactReq);
+        ResponseBean responseBean = hcf.getContactApiClient().addContact(contactReq);
         System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
         driver.quit();
     }
@@ -121,8 +128,9 @@ public class ContactsApiTest {
     @Test
     public void androidAddContact() throws IOException {
         driver = createAndroidDriver();
+        HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -138,7 +146,7 @@ public class ContactsApiTest {
         contactReq.setAvatar(s);
 
 
-        ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().addContact(contactReq);
+        ResponseBean responseBean = hcf.getContactApiClient().addContact(contactReq);
         System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
         driver.quit();
     }
@@ -146,9 +154,10 @@ public class ContactsApiTest {
     @Test
     public void androidDeleteContactTest() {
         driver = createAndroidDriver();
+        HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        HermesClientFactory.INSTANCE.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
-        ResponseBean responseBean = HermesClientFactory.INSTANCE.getContactApiClient().deleteContact("3354");
+        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        ResponseBean responseBean = hcf.getContactApiClient().deleteContact("3354");
         System.out.println(responseBean.getReturnMsg());
         driver.quit();
     }
@@ -173,10 +182,10 @@ public class ContactsApiTest {
 
     @Test
     public void testStartAndroidAppTime() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             driver = createAndroidDriver();
             driver.removeApp("com.glip.mobile.qa");
-            driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.3.20.001-xmn-up-inhouse-release.apk");
+            driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.3.30.004-xmn-up-inhouse-release.apk");
             long startTimeMillis = System.currentTimeMillis();
             driver.activateApp("com.glip.mobile.qa");
             WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
@@ -192,14 +201,73 @@ public class ContactsApiTest {
         for (int i = 0; i < 10; i++) {
             driver = createIOSDriver();
             driver.removeApp("com.glip.mobile.rc");
-            driver.installApp("/Users/jeffries.yu/Downloads/Payload/Glip.zip");
+            driver.installApp("/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip-21.3.20.zip");
             long startTimeMillis = System.currentTimeMillis();
             driver.activateApp("com.glip.mobile.rc");
             WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
-            ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@text='Sign in' or  @text='Switch accounts']"));
+            ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(MobileBy.iOSNsPredicateString("name == 'signIn' || name== 'SignInButton'"));
             driverWait.until(expectedCondition);
             System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
             driver.quit();
         }
+    }
+
+    @Test
+    public void testPageSource() throws Exception {
+        ContactReq contactReq = new ContactReq();
+        contactReq.setFirstName("Jeffries");
+        contactReq.setFamilyName("Yu");
+        ContactReq.Email email = new ContactReq.Email();
+        email.setType("work");
+        email.setValue("296995537@qq.com");
+        contactReq.setEmails(Lists.newArrayList(email));
+
+        // Add avatar
+        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+        String s = Base64.getEncoder().encodeToString(bytes);
+        contactReq.setAvatar(s);
+        new ContactApiClient("http://127.0.0.1:9723").addContact(contactReq);
+    }
+
+    @Test
+    public void configureNumber() {
+        List<Integer> total = new ArrayList<Integer>();
+        total.add(3425);
+        total.add(3265);
+        total.add(3436);
+        total.add(3489);
+        total.add(3481);
+        total.add(3238);
+        total.add(3234);
+        total.add(3180);
+        total.add(3311);
+        total.add(3505);
+        System.out.println("平均数为: " + average(total));
+        System.out.println("中位数为: " + median(total));
+        System.out.println("最大值为: " + Collections.max(total));
+        System.out.println("最小值为: " + Collections.min(total));
+    }
+
+    private static double average(List<Integer> total) {
+        int count = 0;
+        for (Integer i : total) {
+            count = count + i;
+        }
+        return (count + 0.0) / total.size();
+    }
+
+    private static double median(List<Integer> total) {
+        double j = 0;
+        //集合排序
+        Collections.sort(total);
+        int size = total.size();
+        if (size % 2 == 1) {
+            j = total.get((size - 1) / 2);
+        } else {
+            //加0.0是为了把int转成double类型，否则除以2会算错
+            j = (total.get(size / 2 - 1) + total.get(size / 2) + 0.0) / 2;
+        }
+        return j;
     }
 }
