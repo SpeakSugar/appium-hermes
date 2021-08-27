@@ -1,7 +1,9 @@
 package com.ringcentral.hermes.client
 
 import com.ringcentral.hermes.devicespy.DevicePoolApiClient
+import com.ringcentral.hermes.exception.HermesAndroidPortMappingException
 import com.ringcentral.hermes.exception.HermesException
+import com.ringcentral.hermes.util.EnvUtil
 import com.ringcentral.hermes.util.ReflectUtil
 import com.ringcentral.hermes.util.RetryUtil
 import io.appium.java_client.AppiumDriver
@@ -25,16 +27,6 @@ class HermesClientFactory {
     lateinit var contactApiClient: ContactApiClient
 
     lateinit var calendarApiClient: CalendarApiClient
-
-    var adbPath: String = {
-        var adbEnv = System.getenv("ADB")
-        if (adbEnv == null || adbEnv.isEmpty()) {
-            adbEnv = ""
-        } else if (!adbEnv.endsWith("/")) {
-            adbEnv += "/"
-        }
-        adbEnv
-    }()
 
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
         try {
@@ -99,6 +91,7 @@ class HermesClientFactory {
                     hermesPort = adbPort.toInt() + 1000
                     hostName = "127.0.0.1"
                 }
+                val adbPath = EnvUtil.getAdbPath()
                 RetryUtil.call(Callable {
                     shellExec.executeCmd("${adbPath}adb connect $udid")
                     return@Callable shellExec.executeCmd("${adbPath}adb devices").contains(udid)
@@ -115,7 +108,7 @@ class HermesClientFactory {
                     shellExec.executeCmd("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080")
                     Thread.sleep(2000)
                     return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | grep adb | awk '{print $2}'"))
-                }, Predicate.isEqual<Boolean>(true), 15, HermesException("adb port mapping failed"))
+                }, Predicate.isEqual<Boolean>(true), 15, HermesAndroidPortMappingException(shellExec, udid))
                 LOG.info("${adbPath}adb -s $udid forward tcp:$hermesPort tcp:8080 pid is: " + shellExec.executeCmd("lsof -i:$hermesPort | grep adb | awk '{print $2}'"))
             }
             val hermesUrl = "http://$hostName:$hermesPort"
@@ -124,7 +117,12 @@ class HermesClientFactory {
             calendarApiClient = CalendarApiClient(hermesUrl)
         } catch (e: Exception) {
             if (e is HermesException) {
-                throw e
+                if (e is HermesAndroidPortMappingException) {
+                    val isConnect = e.shellExec.executeCmd("${EnvUtil.getAdbPath()}adb devices").contains(e.udid)
+                    throw HermesException("adb port mapping failed, device connected is $isConnect")
+                } else {
+                    throw e
+                }
             } else {
                 throw HermesException("Undefine Exception", e)
             }
