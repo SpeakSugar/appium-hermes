@@ -38,7 +38,10 @@ class HermesClientFactory {
                 LOG.info("delete hermes app success.")
             }
             LOG.info("start to install hermes app...")
-            driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
+            RetryUtil.call(Callable {
+                driver.installApp(hermesAppPath, AndroidInstallApplicationOptions().withGrantPermissionsEnabled())
+                return@Callable true
+            }, Predicate.isEqual(false))
             LOG.info("hermes app install success.")
             RetryUtil.call(Callable {
                 driver.activateApp(bundleId)
