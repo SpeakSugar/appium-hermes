@@ -4,6 +4,8 @@ import java.util.List;
 
 public class ContactReq {
 
+    private String id;
+
     private String displayName;
 
     private String firstName;
@@ -15,6 +17,14 @@ public class ContactReq {
     private List<PhoneNumber> phoneNumbers;
 
     private List<Email> emails;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getDisplayName() {
         return displayName;

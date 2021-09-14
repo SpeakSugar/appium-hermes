@@ -185,7 +185,7 @@ public class ContactsApiTest {
         for (int i = 0; i < 10; i++) {
             driver = createAndroidDriver();
             driver.removeApp("com.glip.mobile.qa");
-            driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.3.30.004-xmn-up-inhouse-release.apk");
+            driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.4.10.003-xmn-up-inhouse-release.apk");
             long startTimeMillis = System.currentTimeMillis();
             driver.activateApp("com.glip.mobile.qa");
             WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
@@ -233,16 +233,16 @@ public class ContactsApiTest {
     @Test
     public void configureNumber() {
         List<Integer> total = new ArrayList<Integer>();
-        total.add(3425);
-        total.add(3265);
-        total.add(3436);
-        total.add(3489);
-        total.add(3481);
-        total.add(3238);
-        total.add(3234);
-        total.add(3180);
-        total.add(3311);
-        total.add(3505);
+        total.add(2910);
+        total.add(3468);
+        total.add(3479);
+        total.add(3408);
+        total.add(3406);
+        total.add(3431);
+        total.add(2971);
+        total.add(2944);
+        total.add(2913);
+        total.add(2999);
         System.out.println("平均数为: " + average(total));
         System.out.println("中位数为: " + median(total));
         System.out.println("最大值为: " + Collections.max(total));
