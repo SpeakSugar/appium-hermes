@@ -6,6 +6,8 @@ public class ContactReq {
 
     private String id;
 
+    private String rawId;
+
     private String displayName;
 
     private String firstName;
@@ -24,6 +26,14 @@ public class ContactReq {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRawId() {
+        return rawId;
+    }
+
+    public void setRawId(String rawId) {
+        this.rawId = rawId;
     }
 
     public String getDisplayName() {
