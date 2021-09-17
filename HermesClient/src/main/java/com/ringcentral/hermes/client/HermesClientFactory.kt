@@ -80,6 +80,15 @@ class HermesClientFactory {
                 if (hermesAppPath.contains(".zip")) {
                     hermesPort = 8080
                 } else {
+                    RetryUtil.call(Callable {
+                        val cmd = "lsof -i:$hermesPort | grep iproxy | awk '{print $2}'"
+                        val pid = shellExec.executeCmd(cmd)
+                        if (StringUtils.isNotBlank(pid)) {
+                            shellExec.executeCmd("kill -9 $pid")
+                            Thread.sleep(2000)
+                        }
+                        return@Callable StringUtils.isBlank(shellExec.executeCmd(cmd))
+                    }, Predicate.isEqual<Boolean>(false))
                     shellExec.executeCmd("iproxy -u $udid -s 0.0.0.0 $hermesPort:8080 &")
                     RetryUtil.call(Callable {
                         return@Callable StringUtils.isBlank(shellExec.executeCmd("lsof -i:$hermesPort | grep iproxy | awk '{print $2}'"))
