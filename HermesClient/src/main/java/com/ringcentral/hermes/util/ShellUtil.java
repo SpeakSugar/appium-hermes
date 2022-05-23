@@ -1,6 +1,6 @@
 package com.ringcentral.hermes.util;
 
-import com.ringcentral.hermes.client.ShellFactory;
+import com.ringcentral.hermes.factory.ShellFactory;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

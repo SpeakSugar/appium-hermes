@@ -1,6 +1,6 @@
 package com.ringcentral.hermes.exception;
 
-import com.ringcentral.hermes.client.ShellFactory;
+import com.ringcentral.hermes.factory.ShellFactory;
 
 public class HermesAndroidPortMappingException extends HermesException {
 

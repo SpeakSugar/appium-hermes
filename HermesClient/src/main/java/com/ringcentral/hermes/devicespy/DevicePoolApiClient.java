@@ -1,6 +1,6 @@
 package com.ringcentral.hermes.devicespy;
 
-import com.ringcentral.hermes.client.ShellFactory;
+import com.ringcentral.hermes.factory.ShellFactory;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
