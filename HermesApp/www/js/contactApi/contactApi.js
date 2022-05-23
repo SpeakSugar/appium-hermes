@@ -5,6 +5,11 @@ function contactApi() {
                 response(request, {returnCode: 200, returnMsg: "connect success"})
             }
 
+            if (request.path === '/openLink') {
+                cordova.InAppBrowser.open(JSON.parse(request.body), '_system', 'location=yes');
+                response(request, {returnCode: 200, returnMsg: "open " + JSON.parse(request.body) + " success"})
+            }
+
             if (request.path === '/addContact') {
                 window.ContactsX.save(
                     JSON.parse(request.body),

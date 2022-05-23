@@ -28,6 +28,8 @@ class HermesClientFactory {
 
     lateinit var calendarApiClient: CalendarApiClient
 
+    lateinit var browserApiClient: BrowserApiClient
+
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
         try {
             val bundleId = "org.ringcentral.hermes"
@@ -127,6 +129,7 @@ class HermesClientFactory {
             //3. init singleton api clients
             contactApiClient = ContactApiClient(hermesUrl)
             calendarApiClient = CalendarApiClient(hermesUrl)
+            browserApiClient = BrowserApiClient(hermesUrl)
         } catch (e: Exception) {
             if (e is HermesException) {
                 if (e is HermesAndroidPortMappingException) {

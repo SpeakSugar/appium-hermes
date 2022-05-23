@@ -65,7 +65,7 @@ public class ContactsApiTest {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "14");
-            capabilities.setCapability(MobileCapabilityType.UDID, "D0AA003065JB1902461");
+            capabilities.setCapability(MobileCapabilityType.UDID, "emulator-5554");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
@@ -94,7 +94,7 @@ public class ContactsApiTest {
         driver = createIOSDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/Hermes.zip");
+        hcf.setUp(driver, "http://mThor_cloud:NextCloud123@cloud-xmn.lab.nordigy.ru/remote.php/webdav/mThor/apps/common/appium-hermes.zip");
         ResponseBean<List<ContactRsp>> responseBean = hcf.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
@@ -135,9 +135,12 @@ public class ContactsApiTest {
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
         ContactReq.Email email = new ContactReq.Email();
-        email.setType("work");
-        email.setValue("296995537@qq.com");
-        contactReq.setEmails(Lists.newArrayList(email));
+        email.setType("home");
+        email.setValue("296995538@qq.com");
+        ContactReq.Email email2 = new ContactReq.Email();
+        email2.setType("home");
+        email2.setValue("296995536@qq.com");
+        contactReq.setEmails(Lists.newArrayList(email, email2));
 
         // Add avatar
         InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
@@ -145,7 +148,24 @@ public class ContactsApiTest {
         String s = Base64.getEncoder().encodeToString(bytes);
         contactReq.setAvatar(s);
 
+        ResponseBean responseBean = hcf.getContactApiClient().addContact(contactReq);
+        System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
+        driver.quit();
+    }
 
+    @Test
+    public void androidUpdateContact() {
+        driver = createAndroidDriver();
+        HermesClientFactory hcf = new HermesClientFactory();
+        System.out.println(driver.getSessionId());
+        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        ContactReq contactReq = new ContactReq();
+        contactReq.setId("1");
+        contactReq.setRawId("1");
+        ContactReq.Email email = new ContactReq.Email();
+        email.setType("work");
+        email.setValue("fuck@qq.com");
+        contactReq.setEmails(Lists.newArrayList(email));
         ResponseBean responseBean = hcf.getContactApiClient().addContact(contactReq);
         System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
         driver.quit();
