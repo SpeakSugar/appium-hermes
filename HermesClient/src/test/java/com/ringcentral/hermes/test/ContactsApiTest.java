@@ -3,7 +3,7 @@ package com.ringcentral.hermes.test;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.ringcentral.hermes.client.ContactApiClient;
-import com.ringcentral.hermes.client.HermesClientFactory;
+import com.ringcentral.hermes.factory.HermesClientFactory;
 import com.ringcentral.hermes.request.contact.ContactReq;
 import com.ringcentral.hermes.response.ResponseBean;
 import com.ringcentral.hermes.response.contact.ContactRsp;
