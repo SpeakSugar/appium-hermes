@@ -30,7 +30,7 @@ class HermesClientFactory {
             val appiumUrl = DriverUtil.getAppiumUrl(driver)
             val capabilities = DriverUtil.getCapabilities(driver)
             var udid = capabilities.getCapability("udid") as String
-            val platformName = capabilities.getCapability("platformName") as String
+            val platformName = if (hermesAppPath.contains(".apk")) "android" else "ios"
             var hermesPort = appiumUrl.port + 5000
             var hostName = appiumUrl.host
             val shellExec = if (platformName == "ios") ShellFactory.getShellExec(hostName) else ShellFactory.getShellExec()
