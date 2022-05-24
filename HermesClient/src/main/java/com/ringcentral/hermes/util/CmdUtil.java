@@ -81,8 +81,10 @@ public class CmdUtil {
                 if (StringUtils.isNotBlank(pid)) {
                     shellExec.executeCmd("kill -9 " + pid);
                     Thread.sleep(2000);
+                    return StringUtils.isBlank(shellExec.executeCmd(cmd));
+                } else {
+                    return true;
                 }
-                return StringUtils.isBlank(shellExec.executeCmd(cmd));
             }, Predicate.isEqual(false));
         }
 
