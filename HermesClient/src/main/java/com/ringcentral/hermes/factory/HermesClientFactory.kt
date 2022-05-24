@@ -45,7 +45,7 @@ class HermesClientFactory {
                 CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
             }
             if (appVersion == "1.0.1") {
-                DriverUtil.killAndLaunch(driver, bundleId)
+                DriverUtil.launch(driver, bundleId)
             } else {
                 DriverUtil.updateAndLaunch(driver, bundleId, hermesAppPath)
                 // ios permission grant

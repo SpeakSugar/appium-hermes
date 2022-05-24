@@ -31,13 +31,7 @@ public class DriverUtil {
         }, Predicate.isEqual(true));
     }
 
-    public static void killAndLaunch(AppiumDriver<?> driver, String bundleId) {
-        RetryUtil.call(() -> {
-            driver.terminateApp(bundleId);
-            Thread.sleep(2000);
-            return driver.queryAppState(bundleId) == ApplicationState.NOT_RUNNING;
-        }, Predicate.isEqual(false), 10, new HermesException(bundleId + " terminate failed."));
-        LOG.info(bundleId + " terminate success.");
+    public static void launch(AppiumDriver<?> driver, String bundleId) {
         RetryUtil.call(() -> {
             driver.activateApp(bundleId);
             Thread.sleep(2000);
