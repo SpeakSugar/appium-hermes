@@ -9,13 +9,10 @@ import com.ringcentral.hermes.exception.HermesException
 import com.ringcentral.hermes.util.CmdUtil
 import com.ringcentral.hermes.util.DriverUtil
 import com.ringcentral.hermes.util.EnvUtil
-import com.ringcentral.hermes.util.ReflectUtil
 import io.appium.java_client.AppiumDriver
 import org.openqa.selenium.By
-import org.openqa.selenium.Capabilities
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URL
 
 class HermesClientFactory {
 
@@ -30,10 +27,10 @@ class HermesClientFactory {
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
         try {
             val bundleId = "org.ringcentral.hermes"
-            val appiumUrl = ReflectUtil.getValueFromParentClass(driver, "io.appium.java_client.AppiumDriver", "remoteAddress") as URL
-            val capabilities = ReflectUtil.getValueFromParentClass(driver, "org.openqa.selenium.remote.RemoteWebDriver", "capabilities") as Capabilities
+            val appiumUrl = DriverUtil.getAppiumUrl(driver)
+            val capabilities = DriverUtil.getCapabilities(driver)
             var udid = capabilities.getCapability("udid") as String
-            val platformName = driver.platformName
+            val platformName = capabilities.getCapability("platformName") as String
             var hermesPort = appiumUrl.port + 5000
             var hostName = appiumUrl.host
             val shellExec = if (platformName == "ios") ShellFactory.getShellExec(hostName) else ShellFactory.getShellExec()

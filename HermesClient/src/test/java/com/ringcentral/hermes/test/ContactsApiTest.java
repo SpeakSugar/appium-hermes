@@ -46,7 +46,7 @@ public class ContactsApiTest {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "ios");
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15");
-            capabilities.setCapability(MobileCapabilityType.UDID, "881BE1B7-2FE6-407D-AC22-6E46B4F7F2C4");
+            capabilities.setCapability(MobileCapabilityType.UDID, "CD4E977B-C1C0-4249-8689-9F52C345AFE3");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
