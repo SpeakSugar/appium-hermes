@@ -83,7 +83,9 @@ public class ContactsApiTest {
         driver = createAndroidDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        hcf.setUp(driver,
+                "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+                "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
         ResponseBean<List<ContactRsp>> responseBean = hcf.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
@@ -94,7 +96,9 @@ public class ContactsApiTest {
         driver = createIOSDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "http://mThor_cloud:NextCloud123@cloud-xmn.lab.nordigy.ru/remote.php/webdav/mThor/apps/common/appium-hermes.zip");
+        hcf.setUp(driver,
+                "http://mThor_cloud:NextCloud123@cloud-xmn.lab.nordigy.ru/remote.php/webdav/mThor/apps/common/appium-hermes.zip",
+                "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
         ResponseBean<List<ContactRsp>> responseBean = hcf.getContactApiClient().findContact();
         System.out.println(new Gson().toJson(responseBean.getContent()));
         driver.quit();
@@ -105,7 +109,9 @@ public class ContactsApiTest {
         driver = createIOSDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/appium-hermes.zip");
+        hcf.setUp(driver,
+                "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/appium-hermes.zip",
+                "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -130,7 +136,9 @@ public class ContactsApiTest {
         driver = createAndroidDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        hcf.setUp(driver,
+                "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+                "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
         ContactReq contactReq = new ContactReq();
         contactReq.setFirstName("Jeffries");
         contactReq.setFamilyName("Yu");
@@ -158,7 +166,9 @@ public class ContactsApiTest {
         driver = createAndroidDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        hcf.setUp(driver,
+                "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+                "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
         ContactReq contactReq = new ContactReq();
         contactReq.setId("1");
         contactReq.setRawId("1");
@@ -176,7 +186,9 @@ public class ContactsApiTest {
         driver = createAndroidDriver();
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
-        hcf.setUp(driver, "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk");
+        hcf.setUp(driver,
+                "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+                "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
         ResponseBean responseBean = hcf.getContactApiClient().deleteContact("3354");
         System.out.println(responseBean.getReturnMsg());
         driver.quit();
