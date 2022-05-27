@@ -43,34 +43,38 @@ class HermesClientFactory {
     }
 
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String, deviceSpyUrl: String) {
+        val bundleId = "org.ringcentral.hermes"
+        val appiumUrl = DriverUtil.getAppiumUrl(driver)
+        val capabilities = DriverUtil.getCapabilities(driver)
+        var udid = capabilities.getCapability("udid") as String
+        val platformName = if (hermesAppPath.contains(".apk")) "android" else "ios"
+        var hermesPort = appiumUrl.port + 5000
+        var hostName = appiumUrl.host
+        val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName)
+        else ShellFactory.getShellExec()
+        val isIOSSimulator = hermesAppPath.contains(".zip")
+        //1. install/update hermes app, and launch it
+        try {
+            val appVersion = if (platformName == "ios") {
+                CmdUtil.IOSCmdUtil(shellExec).getAppVersion(udid, bundleId, isIOSSimulator)
+            } else {
+                CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
+            }
+            if (appVersion == "1.0.1") {
+                DriverUtil.launch(driver, bundleId)
+            } else {
+                DriverUtil.updateAndLaunch(driver, bundleId, hermesAppPath)
+                // ios permission grant
+                if (platformName == "ios") {
+                    DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='OK']"))
+                    DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
+                }
+            }
+        } catch (e: Exception) {
+            throw HermesException("HermesException", e)
+        }
         Thread {
             try {
-                val bundleId = "org.ringcentral.hermes"
-                val appiumUrl = DriverUtil.getAppiumUrl(driver)
-                val capabilities = DriverUtil.getCapabilities(driver)
-                var udid = capabilities.getCapability("udid") as String
-                val platformName = if (hermesAppPath.contains(".apk")) "android" else "ios"
-                var hermesPort = appiumUrl.port + 5000
-                var hostName = appiumUrl.host
-                val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName)
-                else ShellFactory.getShellExec()
-                val isIOSSimulator = hermesAppPath.contains(".zip")
-                //1. install/update hermes app, and launch it
-                val appVersion = if (platformName == "ios") {
-                    CmdUtil.IOSCmdUtil(shellExec).getAppVersion(udid, bundleId, isIOSSimulator)
-                } else {
-                    CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
-                }
-                if (appVersion == "1.0.1") {
-                    DriverUtil.launch(driver, bundleId)
-                } else {
-                    DriverUtil.updateAndLaunch(driver, bundleId, hermesAppPath)
-                    // ios permission grant
-                    if (platformName == "ios") {
-                        DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='OK']"))
-                        DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
-                    }
-                }
                 //2. port mapping
                 if (platformName == "ios") {
                     if (isIOSSimulator) {
