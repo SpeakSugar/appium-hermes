@@ -24,7 +24,7 @@ class HermesClientFactory {
 
     lateinit var browserApiClient: BrowserApiClient
 
-    fun setUp(driver: AppiumDriver<*>, hermesAppPath: String) {
+    fun setUp(driver: AppiumDriver<*>, hermesAppPath: String, deviceSpyUrl: String) {
         try {
             val bundleId = "org.ringcentral.hermes"
             val appiumUrl = DriverUtil.getAppiumUrl(driver)
@@ -33,7 +33,8 @@ class HermesClientFactory {
             val platformName = if (hermesAppPath.contains(".apk")) "android" else "ios"
             var hermesPort = appiumUrl.port + 5000
             var hostName = appiumUrl.host
-            val shellExec = if (platformName == "ios") ShellFactory.getShellExec(hostName) else ShellFactory.getShellExec()
+            val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName)
+            else ShellFactory.getShellExec()
             val isIOSSimulator = hermesAppPath.contains(".zip")
             //1. install/update hermes app, and launch it
             val appVersion = if (platformName == "ios") {
@@ -62,7 +63,7 @@ class HermesClientFactory {
                 }
             } else {
                 if (hostName != "127.0.0.1") {
-                    val adbPort = DevicePoolApiClient(hostName).getAdbPort(udid)
+                    val adbPort = DevicePoolApiClient(deviceSpyUrl, hostName).getAdbPort(udid)
                     udid = "$hostName:$adbPort"
                     hermesPort = adbPort.toInt() + 1000
                     hostName = "127.0.0.1"

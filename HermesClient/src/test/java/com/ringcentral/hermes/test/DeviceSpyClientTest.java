@@ -7,12 +7,12 @@ public class DeviceSpyClientTest {
 
     @Test
     public void cmdTest() {
-        System.out.println(new DevicePoolApiClient("10.32.46.148").executeCmd("lsof -i:7614 | awk '{print $2}' | sed -n '2p'"));
+        System.out.println(new DevicePoolApiClient("http://aqa01-i01-xta02.lab.nordigy.ru:10000/","10.32.46.148").executeCmd("lsof -i:7614 | awk '{print $2}' | sed -n '2p'"));
     }
 
     @Test
     public void spyTest() {
-        System.out.println(new DevicePoolApiClient("10.32.46.148").getAdbPort("RF8M41HVHKK"));
+        System.out.println(new DevicePoolApiClient("http://aqa01-i01-xta02.lab.nordigy.ru:10000/","10.32.46.148").getAdbPort("RF8M41HVHKK"));
     }
 
 }

@@ -23,13 +23,13 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
 
     private String hostName;
 
-    public DevicePoolApiClient(String hostName) {
+    public DevicePoolApiClient(String baseUrl, String hostName) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .build();
         devicePoolService = new Retrofit.Builder()
-                .baseUrl("http://aqa01-i01-xta02.lab.nordigy.ru:10000/")
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build().create(iDevicePoolService.class);

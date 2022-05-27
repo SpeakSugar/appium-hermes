@@ -9,11 +9,11 @@ public class ShellFactory {
         return new ShellUtil();
     }
 
-    public static ShellExec getShellExec(String hostName) {
+    public static ShellExec getShellExec(String baseUrl, String hostName) {
         if (hostName.equals("127.0.0.1")) {
             return new ShellUtil();
         } else {
-            return new DevicePoolApiClient(hostName);
+            return new DevicePoolApiClient(baseUrl, hostName);
         }
     }
 
