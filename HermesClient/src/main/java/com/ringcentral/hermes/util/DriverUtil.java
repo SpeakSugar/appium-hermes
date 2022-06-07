@@ -41,6 +41,11 @@ public class DriverUtil {
         }, Predicate.isEqual(true));
     }
 
+    public static boolean isRunning(AppiumDriver<?> driver, String bundleId) {
+        ApplicationState appState = driver.queryAppState(bundleId);
+        return appState == ApplicationState.RUNNING_IN_FOREGROUND || appState == ApplicationState.RUNNING_IN_BACKGROUND;
+    }
+
     public static void launch(AppiumDriver<?> driver, String bundleId) {
         RetryUtil.call(() -> {
             driver.activateApp(bundleId);
@@ -50,7 +55,7 @@ public class DriverUtil {
         LOG.info(bundleId + " activate success.");
     }
 
-    public static void updateAndLaunch(AppiumDriver<?> driver, String bundleId, String hermesAppPath) {
+    public static void update(AppiumDriver<?> driver, String bundleId, String hermesAppPath) {
         if (driver.isAppInstalled(bundleId)) {
             LOG.info("start to delete " + bundleId + "...");
             driver.removeApp(bundleId);
@@ -62,11 +67,5 @@ public class DriverUtil {
             return true;
         }, Predicate.isEqual(false));
         LOG.info(bundleId + " install success.");
-        RetryUtil.call(() -> {
-            driver.activateApp(bundleId);
-            Thread.sleep(2000);
-            return driver.queryAppState(bundleId) == ApplicationState.RUNNING_IN_FOREGROUND;
-        }, Predicate.isEqual(false), 10, new HermesException(bundleId + " activate failed."));
-        LOG.info(bundleId + " activate success.");
     }
 }

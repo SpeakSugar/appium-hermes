@@ -10,6 +10,7 @@ import com.ringcentral.hermes.util.CmdUtil
 import com.ringcentral.hermes.util.DriverUtil
 import com.ringcentral.hermes.util.EnvUtil
 import io.appium.java_client.AppiumDriver
+import io.appium.java_client.appmanagement.ApplicationState
 import org.openqa.selenium.By
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,6 +22,12 @@ class HermesClientFactory {
 
     private val latch: CountDownLatch = CountDownLatch(1)
 
+    private val bundleId: String = "org.ringcentral.hermes"
+
+    private var isNeedGrantPermission: Boolean = false
+
+    private lateinit var driver: AppiumDriver<*>
+
     private lateinit var contactApiClient: ContactApiClient
 
     private lateinit var calendarApiClient: CalendarApiClient
@@ -29,21 +36,41 @@ class HermesClientFactory {
 
     fun getContactApiClient(): ContactApiClient {
         latch.await()
+        if (!DriverUtil.isRunning(driver, bundleId)) {
+            DriverUtil.launch(driver, bundleId)
+            grantPermission()
+        }
         return contactApiClient
     }
 
     fun getCalendarApiClient(): CalendarApiClient {
         latch.await()
+        if (!DriverUtil.isRunning(driver, bundleId)) {
+            DriverUtil.launch(driver, bundleId)
+            grantPermission()
+        }
         return calendarApiClient
     }
 
     fun getBrowserApiClient(): BrowserApiClient {
         latch.await()
+        if (driver.queryAppState(bundleId) != ApplicationState.RUNNING_IN_FOREGROUND) {
+            DriverUtil.launch(driver, bundleId)
+            grantPermission()
+        }
         return browserApiClient
     }
 
+    private fun grantPermission() {
+        if (isNeedGrantPermission) {
+            DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='OK']"))
+            DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
+            isNeedGrantPermission = false
+        }
+    }
+
     fun setUp(driver: AppiumDriver<*>, hermesAppPath: String, deviceSpyUrl: String) {
-        val bundleId = "org.ringcentral.hermes"
+        this.driver = driver
         val appiumUrl = DriverUtil.getAppiumUrl(driver)
         val capabilities = DriverUtil.getCapabilities(driver)
         var udid = capabilities.getCapability("udid") as String
@@ -53,21 +80,17 @@ class HermesClientFactory {
         val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName)
         else ShellFactory.getShellExec()
         val isIOSSimulator = hermesAppPath.contains(".zip")
-        //1. install/update hermes app, and launch it
+        //1. update hermes app
         try {
             val appVersion = if (platformName == "ios") {
                 CmdUtil.IOSCmdUtil(shellExec).getAppVersion(udid, bundleId, isIOSSimulator)
             } else {
                 CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
             }
-            if (appVersion == "1.0.1") {
-                DriverUtil.launch(driver, bundleId)
-            } else {
-                DriverUtil.updateAndLaunch(driver, bundleId, hermesAppPath)
-                // ios permission grant
+            if (appVersion != "1.0.1") {
+                DriverUtil.update(driver, bundleId, hermesAppPath)
                 if (platformName == "ios") {
-                    DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='OK']"))
-                    DriverUtil.clickUntilDisappear(driver, By.xpath("//XCUIElementTypeButton[@name='WLAN & Cellular']"))
+                    isNeedGrantPermission = true
                 }
             }
         } catch (e: Exception) {

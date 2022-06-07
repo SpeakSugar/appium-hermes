@@ -46,7 +46,7 @@ public class ContactsApiTest {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "ios");
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15");
-            capabilities.setCapability(MobileCapabilityType.UDID, "CD4E977B-C1C0-4249-8689-9F52C345AFE3");
+            capabilities.setCapability(MobileCapabilityType.UDID, "893A0AFC-1BD8-4B84-8EC9-5B95FE7CFFD5");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
@@ -84,10 +84,9 @@ public class ContactsApiTest {
         HermesClientFactory hcf = new HermesClientFactory();
         System.out.println(driver.getSessionId());
         hcf.setUp(driver,
-                "/Users/jeffries.yu/IdeaProjects/appium-hermes/HermesApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk",
+                "http://mThor_cloud:NextCloud123@cloud-xmn.lab.nordigy.ru/remote.php/webdav/mThor/apps/common/appium-hermes.apk",
                 "http://aqa01-i01-xta02.lab.nordigy.ru:10000/");
-        ResponseBean<List<ContactRsp>> responseBean = hcf.getContactApiClient().findContact();
-        System.out.println(new Gson().toJson(responseBean.getContent()));
+        hcf.getBrowserApiClient().openLink("https://www.baidu.com");
         driver.quit();
     }
 
