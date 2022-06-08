@@ -43,7 +43,9 @@ public class DriverUtil {
 
     public static boolean isRunning(AppiumDriver<?> driver, String bundleId) {
         ApplicationState appState = driver.queryAppState(bundleId);
-        return appState == ApplicationState.RUNNING_IN_FOREGROUND || appState == ApplicationState.RUNNING_IN_BACKGROUND;
+        return appState == ApplicationState.RUNNING_IN_FOREGROUND
+                || appState == ApplicationState.RUNNING_IN_BACKGROUND
+                || appState == ApplicationState.RUNNING_IN_BACKGROUND_SUSPENDED;
     }
 
     public static void launch(AppiumDriver<?> driver, String bundleId) {
