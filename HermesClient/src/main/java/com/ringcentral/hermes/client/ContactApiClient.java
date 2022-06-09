@@ -5,6 +5,7 @@ import com.ringcentral.hermes.exception.HermesException;
 import com.ringcentral.hermes.request.contact.ContactReq;
 import com.ringcentral.hermes.response.ResponseBean;
 import com.ringcentral.hermes.response.contact.ContactRsp;
+import com.ringcentral.hermes.util.APIHelper;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,53 +36,37 @@ public class ContactApiClient {
     }
 
     public ResponseBean testApi() {
-        try {
-            Call<ResponseBean> call = contactService.testApi();
-            return call.execute().body();
-        } catch (IOException e) {
-            throw new HermesException("IOException", e);
-        }
+        Call<ResponseBean> call = contactService.testApi();
+        return APIHelper.callWithRetry(call).body();
     }
 
     public ResponseBean<List<ContactRsp>> findContact() {
-        try {
-            Call<ResponseBean<List<ContactRsp>>> call = contactService.findContact();
-            ResponseBean<List<ContactRsp>> responseBean = call.execute().body();
-            if (responseBean.getReturnCode() == 200) {
-                return responseBean;
-            } else {
-                throw new HermesException(responseBean.getReturnMsg());
-            }
-        } catch (IOException e) {
-            throw new HermesException("IOException", e);
+        Call<ResponseBean<List<ContactRsp>>> call = contactService.findContact();
+        ResponseBean<List<ContactRsp>> responseBean = APIHelper.callWithRetry(call).body();
+        if (responseBean.getReturnCode() == 200) {
+            return responseBean;
+        } else {
+            throw new HermesException(responseBean.getReturnMsg());
         }
     }
 
     public ResponseBean addContact(ContactReq contactReq) {
-        try {
-            Call<ResponseBean> call = contactService.addContact(contactReq);
-            ResponseBean<List<ContactRsp>> responseBean = call.execute().body();
-            if (responseBean.getReturnCode() == 200) {
-                return responseBean;
-            } else {
-                throw new HermesException(responseBean.getReturnMsg());
-            }
-        } catch (IOException e) {
-            throw new HermesException("IOException", e);
+        Call<ResponseBean> call = contactService.addContact(contactReq);
+        ResponseBean<List<ContactRsp>> responseBean = APIHelper.callWithRetry(call).body();
+        if (responseBean.getReturnCode() == 200) {
+            return responseBean;
+        } else {
+            throw new HermesException(responseBean.getReturnMsg());
         }
     }
 
     public ResponseBean deleteContact(String id) {
-        try {
-            Call<ResponseBean> call = contactService.deleteContact(id);
-            ResponseBean<List<ContactRsp>> responseBean = call.execute().body();
-            if (responseBean.getReturnCode() == 200) {
-                return responseBean;
-            } else {
-                throw new HermesException(responseBean.getReturnMsg());
-            }
-        } catch (IOException e) {
-            throw new HermesException("IOException", e);
+        Call<ResponseBean> call = contactService.deleteContact(id);
+        ResponseBean<List<ContactRsp>> responseBean = APIHelper.callWithRetry(call).body();
+        if (responseBean.getReturnCode() == 200) {
+            return responseBean;
+        } else {
+            throw new HermesException(responseBean.getReturnMsg());
         }
     }
 }

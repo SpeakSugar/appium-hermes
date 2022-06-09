@@ -1,9 +1,8 @@
 package com.ringcentral.hermes.client;
 
 import com.ringcentral.hermes.client.browser.iBrowserService;
-import com.ringcentral.hermes.client.contact.iContactService;
-import com.ringcentral.hermes.exception.HermesException;
 import com.ringcentral.hermes.response.ResponseBean;
+import com.ringcentral.hermes.util.APIHelper;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -29,12 +28,8 @@ public class BrowserApiClient {
     }
 
     public ResponseBean openLink(String url) {
-        try {
-            Call<ResponseBean> call = browserService.openLink(url);
-            return call.execute().body();
-        } catch (IOException e) {
-            throw new HermesException("IOException", e);
-        }
+        Call<ResponseBean> call = browserService.openLink(url);
+        return APIHelper.callWithRetry(call).body();
     }
 
 }
