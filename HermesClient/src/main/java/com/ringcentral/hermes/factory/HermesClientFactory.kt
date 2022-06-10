@@ -38,8 +38,8 @@ class HermesClientFactory {
         latch.await()
         if (!DriverUtil.isRunning(driver, bundleId)) {
             DriverUtil.launch(driver, bundleId)
-            grantPermission()
         }
+        grantPermission()
         return contactApiClient
     }
 
@@ -47,8 +47,8 @@ class HermesClientFactory {
         latch.await()
         if (!DriverUtil.isRunning(driver, bundleId)) {
             DriverUtil.launch(driver, bundleId)
-            grantPermission()
         }
+        grantPermission()
         return calendarApiClient
     }
 
@@ -56,8 +56,8 @@ class HermesClientFactory {
         latch.await()
         if (driver.queryAppState(bundleId) != ApplicationState.RUNNING_IN_FOREGROUND) {
             DriverUtil.launch(driver, bundleId)
-            grantPermission()
         }
+        grantPermission()
         return browserApiClient
     }
 
@@ -96,7 +96,7 @@ class HermesClientFactory {
         } catch (e: Exception) {
             throw HermesException("HermesException", e)
         }
-        Thread {
+        Thread ({
             try {
                 //2. port mapping
                 if (platformName == "ios") {
@@ -138,7 +138,7 @@ class HermesClientFactory {
             } finally {
                 latch.countDown()
             }
-        }.start()
+        }, Thread.currentThread().name + "-Hermes").start()
     }
 
 }
