@@ -18,9 +18,9 @@ public class APIHelper {
         try {
             return RetryerBuilder.<Response<T>>newBuilder()
                     .retryIfExceptionOfType(IOException.class)
-                    .withWaitStrategy(WaitStrategies.incrementingWait(3, TimeUnit.SECONDS, 5, TimeUnit.SECONDS))
+                    .withWaitStrategy(WaitStrategies.incrementingWait(5, TimeUnit.SECONDS, 5, TimeUnit.SECONDS))
                     .withStopStrategy(StopStrategies.stopAfterAttempt(3))
-                    .build().call(call::execute);
+                    .build().call(call.clone()::execute);
         } catch (ExecutionException e) {
             throw new HermesException("ExecutionException", e);
         } catch (RetryException e) {
