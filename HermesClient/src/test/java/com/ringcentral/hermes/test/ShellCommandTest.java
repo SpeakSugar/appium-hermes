@@ -1,5 +1,6 @@
 package com.ringcentral.hermes.test;
 
+import com.ringcentral.hermes.devicespy.DevicePoolApiClient;
 import com.ringcentral.hermes.util.ShellUtil;
 import org.junit.Test;
 
@@ -18,6 +19,12 @@ public class ShellCommandTest {
         System.out.println(new ShellUtil().executeCmd("adb devices"));
     }
 
-
+    @Test
+    public void testDeviceSpyClient() {
+        DevicePoolApiClient client = new DevicePoolApiClient("http://aqa01-i01-xta02.lab.nordigy.ru:10000/", "10.32.46.225");
+        client.executeCmd("iproxy -u 00008110-0019455201A2801E -s 0.0.0.0 9730:8080 &");
+        String result = client.executeCmd("lsof -i:9730 | grep iproxy | awk '{print $2}'");
+        System.out.println(result);
+    }
 
 }
