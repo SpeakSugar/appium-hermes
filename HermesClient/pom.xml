@@ -6,7 +6,7 @@
 
     <groupId>com.ringcentral.hermes</groupId>
     <artifactId>Hermes-client</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>

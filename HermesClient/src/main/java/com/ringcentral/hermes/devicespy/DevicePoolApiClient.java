@@ -46,9 +46,13 @@ public class DevicePoolApiClient implements ShellFactory.ShellExec {
             Call<CommonDevicePoolResponse> call = devicePoolService.executeCommand(requestBody);
             Response<CommonDevicePoolResponse> response = call.execute();
             if (response.code() >= 200 && response.code() < 400) {
-                return String.valueOf(response.body().getData().get("res"));
+                String res = String.valueOf(response.body().getData().get("res"));
+                LOG.info("The command result is: " + res);
+                return res;
             } else {
-                return null;
+                String res = response.errorBody().string();
+                LOG.info("The command result is: " + res);
+                return res;
             }
         } catch (IOException e) {
             return null;

@@ -27,7 +27,9 @@ public class ShellUtil implements ShellFactory.ShellExec {
             while ((line = input.readLine()) != null) {
                 sb.append(line);
             }
-            return sb.toString();
+            String res = sb.toString();
+            LOG.info("The command result is: " + res);
+            return res;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
