@@ -2,3 +2,7 @@
 /HermesClient/Hermes-client.iml
 /HermesClient/target/
 /HermesClient/logs/
+/HermesApp/node_modules/
+/HermesApp/platforms/
+/HermesApp/plugins/
+.DS_Store
