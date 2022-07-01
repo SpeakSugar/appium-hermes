@@ -13,6 +13,8 @@
 # Current Support Native Method
 ✅ &nbsp; Native Contact Api
 
+✅ &nbsp; InAppBrower Api
+
 ❎ &nbsp; Native Calendar Api
 
 ❎ &nbsp; Native Camera Api
@@ -21,8 +23,6 @@
 
 ❎ &nbsp; Native Geolocation Api
 
-❎ &nbsp; InAppBrower Api
-
 ❎ &nbsp; Others Native Api...
 
 # Requirements
@@ -30,26 +30,27 @@
 - **android** `>= 22`
 
 # Usage
-First, you should download **appium-hermes.apk**, **appium-hermes.ipa**, **appium-hermes.zip** from https://github.com/SpeakSugar/appium-hermes/releases
+First, you should download **appium-hermes.apk**, **appium-hermes.ipa**, **appium-hermes.zip** from http://cloud-xmn.lab.nordigy.ru/apps/files/?dir=/mThor/apps/common&fileid=8093
 
 And you can intergrate **Hermes-client** in your java appium testing framework project, like below:
 ```xml
-  <dependency>
-      <groupId>com.github.SpeakSugar</groupId>
-      <artifactId>appium-hermes</artifactId>
-      <version>a0024bb644</version>
-  </dependency>
+<dependency>
+     <groupId>com.ringcentral.hermes</groupId>
+     <artifactId>Hermes-client</artifactId>
+     <version>1.0.8</version>
+</dependency>
 ```
 ```java
  AppiumDriver appiumDriver = createYourSelfAppiumDriver();
  String hermesAppPath = configHermesAppDownloadPath();
- HermesClientFactory.INSTANCE.setUp(appiumDriver, hermesAppPath);
+ HermesClientFactory hcf = new HermesClientFactory();
+ hcf.setUp(appiumDriver, hermesAppPath);
  Thread.sleep(5000); // wait 5s to ensure Hermes-app is running
 ```
 
 And use contact api like below:
 ```java
- ContactApiClient contactApiClient = HermesClientFactory.INSTANCE.getContactApiClient();
+ ContactApiClient contactApiClient = hcf.getContactApiClient();
  
  //find contacts
  ResponseBean<List<ContactRsp>> responseBean = contactApiClient.findContact();
@@ -79,6 +80,39 @@ And use contact api like below:
  contactReq.setPhoneNumbers(phoneNumberList);
  contactApiClient.addContact(contactReq);
 ```
+
+# Develop
+
+#### how to generate / develop HermesApp
+
+step 1:
+```bash
+npm install -g cordova
+cd HermesApp
+brew install gradle
+sudo gem install cocoapods
+cd ~/Library/Android/sdk/tools/bin && .sdkmanager "build-tools;29.0.3"
+cordova platform add ios
+cordova platform add android
+cordova requirements 
+# should install lack requirements
+# if requirements result is failed, resolve it and 
+# delete platform dir and
+# exec 'cordova platform add ios' && 'cordova platform add android' again
+cordova build android
+cordova build --emulator ios
+cordova build --device ios
+```
+
+step 2:
+
+```
+Then install app on your device, open it.
+it will start at port 8080.
+use http util to request it.
+The api write in ./HermesApp/www/js/contactApi/contactApi.js
+```
+
 # License
 
 See [LICENSE](LICENSE).
