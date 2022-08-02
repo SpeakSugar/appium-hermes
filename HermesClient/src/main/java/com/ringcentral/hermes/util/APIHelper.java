@@ -17,7 +17,7 @@ public class APIHelper {
     public static <T> Response<T> callWithRetry(Call<T> call) {
         try {
             return RetryerBuilder.<Response<T>>newBuilder()
-                    .retryIfExceptionOfType(IOException.class)
+                    .retryIfExceptionOfType(Exception.class)
                     .withWaitStrategy(WaitStrategies.incrementingWait(5, TimeUnit.SECONDS, 5, TimeUnit.SECONDS))
                     .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                     .build().call(() -> call.clone().execute());
