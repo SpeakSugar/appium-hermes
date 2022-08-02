@@ -85,6 +85,10 @@ class HermesClientFactory {
             val appVersion = if (platformName == "ios") {
                 CmdUtil.IOSCmdUtil(shellExec).getAppVersion(udid, bundleId, isIOSSimulator)
             } else {
+                if (hostName != "127.0.0.1") {
+                    val adbPort = DevicePoolApiClient(deviceSpyUrl, hostName).getAdbPort(udid)
+                    udid = "$hostName:$adbPort"
+                }
                 CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
             }
             if (appVersion != "1.0.1") {
