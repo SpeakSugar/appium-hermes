@@ -16,7 +16,6 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.omg.PortableInterceptor.Interceptor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -150,10 +149,10 @@ public class ContactsApiTest {
         contactReq.setEmails(Lists.newArrayList(email, email2));
 
         // Add avatar
-        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
-        byte[] bytes = IOUtils.toByteArray(inputStream);
-        String s = Base64.getEncoder().encodeToString(bytes);
-        contactReq.setAvatar(s);
+//        InputStream inputStream = this.getClass().getResourceAsStream("/Avatar.jpg");
+//        byte[] bytes = IOUtils.toByteArray(inputStream);
+//        String s = Base64.getEncoder().encodeToString(bytes);
+//        contactReq.setAvatar(s);
 
         ResponseBean responseBean = hcf.getContactApiClient().addContact(contactReq);
         System.out.println(new Gson().toJson(responseBean.getReturnMsg()));
