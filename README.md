@@ -81,6 +81,9 @@ And use contact api like below:
  contactApiClient.addContact(contactReq);
 ```
 
+# About Port-Mapping
+![port-mapping](port-mapping.png)
+
 # Develop
 
 #### how to generate / develop HermesApp
