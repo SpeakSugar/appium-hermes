@@ -75,10 +75,10 @@ class HermesClientFactory {
         val capabilities = DriverUtil.getCapabilities(driver)
         var udid = capabilities.getCapability("udid") as String
         val platformName = if (hermesAppPath.contains(".apk")) "android" else "ios"
+        var adbPort: String = ""
         var hermesPort = appiumUrl.port + 5000
         var hostName = appiumUrl.host
-        val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName)
-        else ShellFactory.getShellExec()
+        val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName) else ShellFactory.getShellExec()
         val isIOSSimulator = hermesAppPath.contains(".zip")
         //1. update hermes app
         try {
@@ -86,7 +86,7 @@ class HermesClientFactory {
                 CmdUtil.IOSCmdUtil(shellExec).getAppVersion(udid, bundleId, isIOSSimulator)
             } else {
                 if (hostName != "127.0.0.1") {
-                    val adbPort = DevicePoolApiClient(deviceSpyUrl, hostName).getAdbPort(udid)
+                    adbPort = DevicePoolApiClient(deviceSpyUrl, hostName).getAdbPort(udid)
                     udid = "$hostName:$adbPort"
                 }
                 CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
@@ -113,8 +113,6 @@ class HermesClientFactory {
                     }
                 } else {
                     if (hostName != "127.0.0.1") {
-                        val adbPort = DevicePoolApiClient(deviceSpyUrl, hostName).getAdbPort(udid)
-                        udid = "$hostName:$adbPort"
                         hermesPort = adbPort.toInt() + 1000
                         hostName = "127.0.0.1"
                     }
