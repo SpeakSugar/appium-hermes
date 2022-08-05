@@ -10,6 +10,7 @@ import com.ringcentral.hermes.util.CmdUtil
 import com.ringcentral.hermes.util.DriverUtil
 import com.ringcentral.hermes.util.EnvUtil
 import io.appium.java_client.AppiumDriver
+import io.appium.java_client.InteractsWithApps
 import io.appium.java_client.appmanagement.ApplicationState
 import org.openqa.selenium.By
 import org.slf4j.Logger
@@ -26,7 +27,7 @@ class HermesClientFactory {
 
     private var isNeedGrantPermission: Boolean = false
 
-    private lateinit var driver: AppiumDriver<*>
+    private lateinit var driver: AppiumDriver
 
     private lateinit var contactApiClient: ContactApiClient
 
@@ -54,7 +55,7 @@ class HermesClientFactory {
 
     fun getBrowserApiClient(): BrowserApiClient {
         latch.await()
-        if (driver.queryAppState(bundleId) != ApplicationState.RUNNING_IN_FOREGROUND) {
+        if ((driver as InteractsWithApps).queryAppState(bundleId) != ApplicationState.RUNNING_IN_FOREGROUND) {
             DriverUtil.launch(driver, bundleId)
         }
         grantPermission()
@@ -69,7 +70,7 @@ class HermesClientFactory {
         }
     }
 
-    fun setUp(driver: AppiumDriver<*>, hermesAppPath: String, deviceSpyUrl: String) {
+    fun setUp(driver: AppiumDriver, hermesAppPath: String, deviceSpyUrl: String) {
         this.driver = driver
         val appiumUrl = DriverUtil.getAppiumUrl(driver)
         val capabilities = DriverUtil.getCapabilities(driver)

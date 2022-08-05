@@ -37,29 +37,28 @@ import java.util.List;
 
 public class ContactsApiTest {
 
-    protected static AppiumDriver<?> driver;
+    protected static AppiumDriver driver;
     protected static final int PORT = 4723;
 
-    public static AppiumDriver<?> createIOSDriver() {
+    public static AppiumDriver createIOSDriver() {
         try {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "ios");
             capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "15");
-            capabilities.setCapability(MobileCapabilityType.UDID, "893A0AFC-1BD8-4B84-8EC9-5B95FE7CFFD5");
+            capabilities.setCapability(MobileCapabilityType.UDID, "9EFA9C23-37A0-478A-8D1C-427433D52FAC");
 //            capabilities.setCapability(MobileCapabilityType.APP, "/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip.zip");
             capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "1");
             capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.IOS_XCUI_TEST);
-            capabilities.setCapability(IOSMobileCapabilityType.LAUNCH_TIMEOUT, 500000);
             capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 600000);
             capabilities.setCapability(IOSMobileCapabilityType.WDA_LOCAL_PORT, 9992);
             capabilities.setCapability("autoLaunch", false);
-            return new IOSDriver<>(new URL("http://" + "127.0.0.1" + ":" + PORT + "/wd/hub"), capabilities);
+            return new IOSDriver(new URL("http://" + "127.0.0.1" + ":" + PORT + "/wd/hub"), capabilities);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static AppiumDriver<?> createAndroidDriver() {
+    public static AppiumDriver createAndroidDriver() {
         try {
             DesiredCapabilities capabilities = new DesiredCapabilities();
             capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "android");
@@ -71,7 +70,7 @@ public class ContactsApiTest {
             capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 600000);
             capabilities.setCapability("systemPort", 9991);
             capabilities.setCapability("autoLaunch", false);
-            return new IOSDriver<>(new URL("http://" + "127.0.0.1" + ":" + PORT + "/wd/hub"), capabilities);
+            return new IOSDriver(new URL("http://" + "127.0.0.1" + ":" + PORT + "/wd/hub"), capabilities);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -208,38 +207,6 @@ public class ContactsApiTest {
         String s = IOUtils.toString(inputStream);
         File file = new File("AvatarCopy.jpg");
         FileUtils.writeByteArrayToFile(file, Base64.getDecoder().decode(s));
-    }
-
-    @Test
-    public void testStartAndroidAppTime() {
-        for (int i = 0; i < 10; i++) {
-            driver = createAndroidDriver();
-            driver.removeApp("com.glip.mobile.qa");
-            driver.installApp("/Users/jeffries.yu/Downloads/ringcentral-21.4.10.003-xmn-up-inhouse-release.apk");
-            long startTimeMillis = System.currentTimeMillis();
-            driver.activateApp("com.glip.mobile.qa");
-            WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
-            ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@text='Sign in' or  @text='Switch accounts']"));
-            driverWait.until(expectedCondition);
-            System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
-            driver.quit();
-        }
-    }
-
-    @Test
-    public void testStartiOSAppTime() {
-        for (int i = 0; i < 10; i++) {
-            driver = createIOSDriver();
-            driver.removeApp("com.glip.mobile.rc");
-            driver.installApp("/Users/jeffries.yu/Downloads/BrandApp/WEB-AQA-XMN-Glip-21.3.20.zip");
-            long startTimeMillis = System.currentTimeMillis();
-            driver.activateApp("com.glip.mobile.rc");
-            WebDriverWait driverWait = new WebDriverWait(driver, 10, 20);
-            ExpectedCondition<WebElement> expectedCondition = ExpectedConditions.presenceOfElementLocated(MobileBy.iOSNsPredicateString("name == 'signIn' || name== 'SignInButton'"));
-            driverWait.until(expectedCondition);
-            System.out.println(System.currentTimeMillis() - startTimeMillis + " ms");
-            driver.quit();
-        }
     }
 
     @Test
