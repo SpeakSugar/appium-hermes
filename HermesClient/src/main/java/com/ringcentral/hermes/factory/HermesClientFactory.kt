@@ -6,6 +6,7 @@ import com.ringcentral.hermes.client.ContactApiClient
 import com.ringcentral.hermes.devicespy.DevicePoolApiClient
 import com.ringcentral.hermes.exception.HermesAndroidPortMappingException
 import com.ringcentral.hermes.exception.HermesException
+import com.ringcentral.hermes.factory.dto.HermesDto
 import com.ringcentral.hermes.util.CmdUtil
 import com.ringcentral.hermes.util.DriverUtil
 import com.ringcentral.hermes.util.EnvUtil
@@ -28,6 +29,8 @@ class HermesClientFactory {
     private var isNeedGrantPermission: Boolean = false
 
     private lateinit var driver: AppiumDriver
+
+    private val hermesDto: HermesDto = HermesDto()
 
     private lateinit var contactApiClient: ContactApiClient
 
@@ -79,7 +82,7 @@ class HermesClientFactory {
         var adbPort: String = ""
         var hermesPort = appiumUrl.port + 5000
         var hostName = appiumUrl.host
-        val shellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName) else ShellFactory.getShellExec()
+        val shellExec: ShellFactory.ShellExec = if (platformName == "ios") ShellFactory.getShellExec(deviceSpyUrl, hostName) else ShellFactory.getShellExec()
         val isIOSSimulator = hermesAppPath.contains(".zip")
         //1. update hermes app
         try {
@@ -122,6 +125,12 @@ class HermesClientFactory {
                     androidCmdUtil.removeForwardPort(udid, hermesPort.toString())
                     androidCmdUtil.forwardPort(udid, hermesPort.toString())
                 }
+                hermesDto.platformName = platformName
+                hermesDto.udid = udid
+                hermesDto.isIOSSimulator = isIOSSimulator
+                hermesDto.hermesPort = hermesPort
+                hermesDto.hostName = hostName
+                hermesDto.shellExec = shellExec
                 val hermesUrl = "http://$hostName:$hermesPort"
                 //3. init singleton api clients
                 contactApiClient = ContactApiClient(hermesUrl)
@@ -142,6 +151,17 @@ class HermesClientFactory {
                 latch.countDown()
             }
         }, Thread.currentThread().name + "-Hermes").start()
+    }
+
+    fun tearDown() {
+        if (DriverUtil.isRunning(driver, bundleId)) {
+            (driver as InteractsWithApps).terminateApp(bundleId)
+        }
+        if (hermesDto.platformName == "ios" && !hermesDto.isIOSSimulator) {
+            CmdUtil.IOSCmdUtil(hermesDto.shellExec).removeForwardPort(hermesDto.udid, hermesDto.hermesPort.toString())
+        } else {
+            CmdUtil.AndroidCmdUtil(hermesDto.shellExec).removeForwardPort(hermesDto.udid, hermesDto.hermesPort.toString())
+        }
     }
 
 }
