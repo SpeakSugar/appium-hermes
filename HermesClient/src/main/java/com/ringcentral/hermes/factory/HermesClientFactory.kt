@@ -95,11 +95,13 @@ class HermesClientFactory {
                 }
                 CmdUtil.AndroidCmdUtil(shellExec).getAppVersion(udid, bundleId)
             }
-            if (appVersion != "1.0.1") {
-                DriverUtil.update(driver, bundleId, hermesAppPath)
-                if (platformName == "ios") {
+            if (platformName == "ios") {
+                if (appVersion != "1.0.1") {
+                    DriverUtil.update(driver, bundleId, hermesAppPath)
                     isNeedGrantPermission = true
                 }
+            } else {
+                DriverUtil.update(driver, bundleId, hermesAppPath)
             }
         } catch (e: Exception) {
             throw HermesException("HermesException", e)
