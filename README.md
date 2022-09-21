@@ -30,21 +30,22 @@
 - **android** `>= 22`
 
 # Usage
-First, you should download **appium-hermes.apk**, **appium-hermes.ipa**, **appium-hermes.zip** from http://cloud-xmn.lab.nordigy.ru/apps/files/?dir=/mThor/apps/common&fileid=8093
+First, you should download **appium-hermes.apk**, **appium-hermes.ipa**, **appium-hermes.zip** from <http://cloud-xmn.lab.nordigy.ru/apps/files/?dir=/mThor/apps/common&fileid=8093>
 
 And you can intergrate **Hermes-client** in your java appium testing framework project, like below:
 ```xml
 <dependency>
-     <groupId>com.ringcentral.hermes</groupId>
-     <artifactId>Hermes-client</artifactId>
-     <version>1.0.8</version>
+    <groupId>com.ringcentral.hermes</groupId>
+    <artifactId>Hermes-client</artifactId>
+    <version>1.1.3</version>
 </dependency>
 ```
 ```java
  AppiumDriver appiumDriver = createYourSelfAppiumDriver();
- String hermesAppPath = configHermesAppDownloadPath();
+ String hermesAppPath = ${hermesApp file location};
+ String deviceSpyUrl = ${can be null};
  HermesClientFactory hcf = new HermesClientFactory();
- hcf.setUp(appiumDriver, hermesAppPath);
+ hcf.setUp(appiumDriver, hermesAppPath, deviceSpyUrl);
  Thread.sleep(5000); // wait 5s to ensure Hermes-app is running
 ```
 
