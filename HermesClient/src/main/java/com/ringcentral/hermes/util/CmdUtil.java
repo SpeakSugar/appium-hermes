@@ -90,7 +90,7 @@ public class CmdUtil {
 
         public void forwardPort(String udid, String port) {
             RetryUtil.call(() -> {
-                shellExec.executeCmd("iproxy -u " + udid + " -s 0.0.0.0 " + port + ":8080 &");
+                shellExec.executeCmd("sh -c 'iproxy -u " + udid + " -s 0.0.0.0 " + port + ":8080 &'");
                 Thread.sleep(2000);
                 return StringUtils.isBlank(shellExec.executeCmd("lsof -i:" + port + " | grep iproxy | awk '{print $2}'"));
             }, Predicate.isEqual(true));
