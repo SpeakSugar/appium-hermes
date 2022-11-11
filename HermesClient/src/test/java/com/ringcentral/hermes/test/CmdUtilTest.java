@@ -38,4 +38,16 @@ public class CmdUtilTest {
         shellExec.executeCmd("iproxy -u 15d9c4e8845e008aac0c0a7efb8405d0fba2ed08 -s 0.0.0.0 9734:8080");
 //        shellExec.executeCmd("iproxy -v");
     }
+
+    @Test
+    public void testIOSCmdUtil4() {
+        ShellFactory.ShellExec shellExec = ShellFactory.getShellExec();
+        CmdUtil.IOSCmdUtil iosCmdUtil = new CmdUtil.IOSCmdUtil(shellExec);
+        try {
+            iosCmdUtil.removeForwardPort("00008020-000D495E1AD0003A", "9738");
+            iosCmdUtil.forwardPort("00008020-000D495E1AD0003A", "9738");
+        } finally {
+            iosCmdUtil.removeForwardPort("00008020-000D495E1AD0003A", "9738");
+        }
+    }
 }
